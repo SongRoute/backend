@@ -13,6 +13,7 @@ WORKDIR /app
 
 # 의존성 설치
 COPY requirements.txt .
+RUN apt-get update && apt-get install -y libgl1
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 앱 복사

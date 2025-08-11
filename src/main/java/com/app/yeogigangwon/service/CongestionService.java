@@ -35,8 +35,13 @@ public class CongestionService {
 
         ResponseEntity<Map> response = restTemplate.postForEntity(pythonApiUrl, entity, Map.class);
 
-        int personCount = (int) response.getBody().get("person_count");
+        Number personCountNumber = (Number) response.getBody().get("personCount");
         String congestionLevel = (String) response.getBody().get("congestion");
+
+        int personCount = 0;
+        if (personCountNumber != null) {
+            personCount = personCountNumber.intValue();
+        }
 
         // MongoDB 저장
         Congestion congestion = Congestion.builder()
