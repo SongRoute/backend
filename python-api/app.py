@@ -13,7 +13,11 @@ from ultralytics import YOLO
 
 # ─────────────────────────────────────────────────────────────
 # 환경변수
-MODEL_PATH = os.getenv("MODEL_PATH", "/app/weights/best.pt")
+# 모델 경로
+# MODEL_PATH = os.getenv("MODEL_PATH", "weights/best.pt")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.getenv("MODEL_PATH", os.path.join(BASE_DIR, "weights", "best.pt"))
+
 CONF_THRESH = float(os.getenv("CONF_THRESH", "0.20"))
 # ─────────────────────────────────────────────────────────────
 
@@ -70,7 +74,7 @@ def health():
 async def predict_file(
     file: UploadFile = File(None, description="이미지 파일 업로드 (multipart/form-data)"),
     image_url: Optional[str] = Form(None, description="이미지 URL (택1)"),
-    beachName: Optional[str] = Form(None),
+    beach_name: Optional[str] = Form(None),
     # 파이썬 쪽에서 등급도 함께 받고 싶으면 임계치 전달(옵션)
     t1: Optional[int] = Form(None),
     t2: Optional[int] = Form(None),
@@ -87,7 +91,8 @@ async def predict_file(
         raise HTTPException(status_code=400, detail="file 또는 image_url 중 하나는 필수입니다.")
 
     # 임시 파일 생성
-    tmp_dir = tempfile.mkdtemp(dir="/app/tmp")
+    # tmp_dir = tempfile.mkdtemp(dir="/app/tmp")
+    tmp_dir = tempfile.mkdtemp()
     tmp_path = os.path.join(tmp_dir, f"{uuid.uuid4().hex}.jpg")
 
     try:
@@ -125,7 +130,7 @@ async def predict_file(
         return PredictResponse(
             timestamp=datetime.datetime.now().isoformat(),
             source=source_desc,
-            beachName=beachName,
+            beachName=beach_name,
             personCount=person_count,
             congestion=congestion,
             conf=conf_th,
