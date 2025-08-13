@@ -6,13 +6,24 @@ services:
       - 'MONGO_INITDB_ROOT_PASSWORD=sdsqkqh!'
       - 'MONGO_INITDB_ROOT_USERNAME=root'
     ports:
-      - '27017'
-#  mysql:
-#    image: 'mysql:latest'
-#    environment:
-#      - 'MYSQL_DATABASE=mydatabase'
-#      - 'MYSQL_PASSWORD=secret'
-#      - 'MYSQL_ROOT_PASSWORD=verysecret'
-#      - 'MYSQL_USER=myuser'
-#    ports:
-#      - '3306'
+      - '27017:27017'
+    command: ["--bind_ip_all", "--auth"]
+
+  python-api:
+    build:
+      context: ./python-api
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./python-api:/app
+    restart: unless-stopped
+
+  backend-app:
+    build:
+      context: . # 현재 프로젝트 루트 디렉터리에서 Dockerfile을 찾음
+    ports:
+      - '8080:8080' # Spring Boot 기본 포트
+    depends_on:
+      - mongodb
+      - python-api
