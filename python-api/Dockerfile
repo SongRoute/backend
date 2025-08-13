@@ -1,27 +1,27 @@
-#FROM ubuntu:latest
-#LABEL authors="ekQnd"
-#
-#ENTRYPOINT ["top", "-b"]
-
+# backend/python-api/Dockerfile
+# Use a slim Python image
 FROM python:3.10-slim
 
-# (선택) 이미지 다운로드 등 보조 유틸
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl wget && rm -rf /var/lib/apt/lists/*
-
+# Set the working directory
 WORKDIR /app
 
-# 의존성 설치
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libsm6 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file and install dependencies
 COPY requirements.txt .
-RUN apt-get update && apt-get install -y libgl1 libglib2.0-0
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 앱 복사
-COPY . .
+# Copy the application code and weights
+COPY app.py .
+COPY weights/best.pt ./weights/best.pt
 
-# 모델/임시 폴더
-RUN mkdir -p /app/weights /app/tmp
+# Expose the Flask port
+EXPOSE 5000
 
-# FastAPI 실행 (YOLO API)
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000"]
-
+# Run the Flask app
+CMD ["python", "app.py"]

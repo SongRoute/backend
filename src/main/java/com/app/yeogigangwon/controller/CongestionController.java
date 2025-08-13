@@ -1,11 +1,15 @@
+// backend/src/main/java/com/app/yeogigangwon/controller/CongestionController.java
 package com.app.yeogigangwon.controller;
 
-import com.app.yeogigangwon.dto.CongestionRequest;
-import com.app.yeogigangwon.dto.CongestionResponse;
+import com.app.yeogigangwon.dto.CongestionDto;
 import com.app.yeogigangwon.service.CongestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/congestion")
@@ -14,8 +18,9 @@ public class CongestionController {
 
     private final CongestionService congestionService;
 
-    @PostMapping
-    public ResponseEntity<CongestionResponse> analyze(@RequestBody CongestionRequest request) {
-        return ResponseEntity.ok(congestionService.analyzeCongestion(request));
+    @GetMapping("/status")
+    public ResponseEntity<List<CongestionDto.CrowdStatus>> getCrowdStatus() {
+        List<CongestionDto.CrowdStatus> statuses = congestionService.getCrowdStatus();
+        return ResponseEntity.ok(statuses);
     }
 }

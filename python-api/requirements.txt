@@ -1,6 +1,6 @@
-fastapi
-uvicorn
+# backend/python-api/requirements.txt
 ultralytics
-python-multipart
-pillow
+torch
+Flask
 requests
+opencv-python

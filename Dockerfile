@@ -1,12 +1,32 @@
-# 사용할 기본 이미지 (Java 17 버전)
-FROM openjdk:17-jdk-slim
+# backend/Dockerfile
 
-# 컨테이너의 작업 디렉터리 설정
+# 스테이지 1: 애플리케이션 빌드
+# Gradle을 사용하여 프로젝트를 빌드합니다.
+FROM gradle:8.14.3-jdk17 AS builder
+
+# 작업 디렉토리를 설정합니다.
 WORKDIR /app
 
-# Gradle을 사용하여 빌드된 JAR 파일을 컨테이너에 복사
-# 먼저 프로젝트를 빌드해야 합니다: ./gradlew bootJar
-COPY build/libs/yeogigangwon-0.0.1-SNAPSHOT.jar app.jar
+# Gradle Wrapper를 복사합니다.
+COPY gradlew .
+COPY gradle ./gradle
+
+# 소스 코드와 설정 파일을 복사합니다.
+COPY build.gradle settings.gradle ./
+COPY src ./src
+
+# 프로젝트를 빌드합니다.
+RUN ./gradlew build -x test
+
+# 스테이지 2: 최종 이미지
+# 빌드된 JAR 파일을 실행하기 위한 가벼운 OpenJDK 이미지를 사용합니다.
+FROM openjdk:17-jdk-slim
+
+# 작업 디렉토리를 설정합니다.
+WORKDIR /app
+
+# 빌드 스테이지에서 생성된 JAR 파일을 복사합니다.
+COPY --from=builder /app/build/libs/*.jar ./app.jar
 
 # 애플리케이션 실행 명령어
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
