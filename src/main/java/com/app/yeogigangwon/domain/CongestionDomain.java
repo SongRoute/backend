@@ -1,4 +1,4 @@
-// backend/src/main/java/com/app/yeogigangwon/domain/CrowdRecord.java
+// backend/src/main/java/com/app/yeogigangwon/domain/CongestionDomain.java
 package com.app.yeogigangwon.domain;
 
 import lombok.AllArgsConstructor;
