@@ -55,7 +55,9 @@ public class CongestionService {
     }
 
     // 30분마다 CCTV 이미지 분석 및 DB 저장 (저녁/새벽 시간 제외)
-    @Scheduled(fixedRate = 1800000) // 30분마다 실행
+//    @Scheduled(fixedRate = 1800000) // 30분마다 실행
+//    @Scheduled(fixedRate = 300000) // 5분마다 실행
+    @Scheduled(cron = "0 */5 * * * *") //
     public void analyzeAndSaveCongestionData() {
         LocalDateTime now = LocalDateTime.now();
         int currentHour = now.getHour();
