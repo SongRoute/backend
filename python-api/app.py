@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # YOLOv8 model loading
 try:
-    model = YOLO('weights/best.pt')  # Ensure the path is correct
+    model = YOLO('weights/best_m.pt')  # Ensure the path is correct
     logging.info("YOLOv8 model loaded successfully.")
 except Exception as e:
     logging.error(f"Error loading YOLOv8 model: {e}")
