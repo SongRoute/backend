@@ -27,3 +27,5 @@ services:
     depends_on:
       - mongodb
       - python-api
+    environment:
+      - TZ=Asia/Seoul

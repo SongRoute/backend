@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.ZoneId; // ★ 추가
 import java.util.*;
 import java.util.Base64;
 
@@ -38,6 +39,9 @@ public class CongestionService {
     // ===== 내부 임계/스코어 계산용 상수 =====
     private static final int FALLBACK_DEN = 20;   // 데이터 부족 시 스코어 분모 기본값
     private static final int MIN_SAMPLES   = 12;  // 적응형 임계치 적용에 필요한 최소 표본수
+
+    // ★ KST 고정
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     @PostConstruct
     public void init() {
@@ -61,9 +65,9 @@ public class CongestionService {
     }
 
     // 5분마다 CCTV 이미지 분석 및 DB 저장 (저녁/새벽 시간 제외)
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") // ★ KST로 스케줄 실행
     public void analyzeAndSaveCongestionData() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(KST); // ★ KST 기준 시간 사용
         int currentHour = now.getHour();
 
         // 22:00 ~ 05:00 사이에는 분석하지 않음
@@ -115,7 +119,7 @@ public class CongestionService {
     }
 
     public List<CongestionDto.CrowdStatus> getCrowdStatus() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(KST); // ★ KST 기준 시간 사용
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
         List<CongestionDto.CrowdStatus> statuses = new ArrayList<>();
 
@@ -124,6 +128,15 @@ public class CongestionService {
                     congestionRepository.findByBeachIdAndTimestampBetweenOrderByTimestampDesc(
                             cctv.getId(), twentyFourHoursAgo, now
                     );
+
+            // 데이터 끊김 체크
+            if (recentRecords.isEmpty()
+                    || recentRecords.get(0).getTimestamp().isBefore(now.minusMinutes(15))) {
+                statuses.add(new CongestionDto.CrowdStatus(
+                        cctv.getId(), cctv.getBeachName(), "정보없음", 0, null
+                ));
+                continue; // 등급/스코어 계산 건너뜀
+            }
 
             int latestCrowd = recentRecords.isEmpty() ? 0 : recentRecords.get(0).getPersonCount();
             List<Integer> recentCounts = new ArrayList<>();
