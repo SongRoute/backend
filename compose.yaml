@@ -1,18 +1,21 @@
 services:
-  mongodb:
-    image: 'mongo:latest'
-    environment:
-      - 'MONGO_INITDB_DATABASE=yeogigangwon'
-      - 'MONGO_INITDB_ROOT_PASSWORD=sdsqkqh!'
-      - 'MONGO_INITDB_ROOT_USERNAME=root'
-    ports:
-      - '27017'
-#  mysql:
-#    image: 'mysql:latest'
-#    environment:
-#      - 'MYSQL_DATABASE=mydatabase'
-#      - 'MYSQL_PASSWORD=secret'
-#      - 'MYSQL_ROOT_PASSWORD=verysecret'
-#      - 'MYSQL_USER=myuser'
-#    ports:
-#      - '3306'
+  # mongodb:
+  #   image: 'mongo:latest'
+  #   environment:
+  #     - 'MONGO_INITDB_DATABASE=yeogigangwon'
+  #     - 'MONGO_INITDB_ROOT_PASSWORD=sdsqkqh55'
+  #     - 'MONGO_INITDB_ROOT_USERNAME=root'
+  #   ports:
+  #     - '27017:27017'
+ mysql:
+   image: 'mysql:8.0'
+   environment:
+     - 'MYSQL_DATABASE=yeogigangwon'
+     - 'MYSQL_ROOT_PASSWORD=sdsqkqh55'
+   ports:
+     - '3306:3306'
+   volumes:
+     - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

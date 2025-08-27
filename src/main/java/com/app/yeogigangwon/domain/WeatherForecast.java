@@ -1,77 +1,42 @@
 package com.app.yeogigangwon.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Document(collection = "weather_forecast")
+/**
+ * 기상청 단기예보 데이터를 저장하는 MySQL 엔티티
+ */
+@Entity
+@Table(name = "weather_forecasts")
+@Data
+@NoArgsConstructor
 public class WeatherForecast {
 
     @Id
-    private String id;
-
-    // 기상청 격자 좌표
-    private int nx;
-    private int ny;
-
-    // 예보 기준(요청) 시각
-    private String baseDate;
-    private String baseTime;
-
-    // 단기예보 주요 지표
-    private int tmp; // 기온
-    private int pop; // 강수확률
-    private int sky; // 하늘상태
-    private int wsd; // 풍속
-
-    // 생성 시각(서버 기준)
-    private LocalDateTime createdAt;
-
-    public WeatherForecast() {}
-
-    public WeatherForecast(String id, int nx, int ny, String baseDate, String baseTime,
-                           int tmp, int pop, int sky, int wsd, LocalDateTime createdAt) {
-        this.id = id;
-        this.nx = nx;
-        this.ny = ny;
-        this.baseDate = baseDate;
-        this.baseTime = baseTime;
-        this.tmp = tmp;
-        this.pop = pop;
-        this.sky = sky;
-        this.wsd = wsd;
-        this.createdAt = createdAt;
-    }
-
-    // Getter & Setter
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-
-    public int getNx() { return nx; }
-    public void setNx(int nx) { this.nx = nx; }
-
-    public int getNy() { return ny; }
-    public void setNy(int ny) { this.ny = ny; }
-
-    public String getBaseDate() { return baseDate; }
-    public void setBaseDate(String baseDate) { this.baseDate = baseDate; }
-
-    public String getBaseTime() { return baseTime; }
-    public void setBaseTime(String baseTime) { this.baseTime = baseTime; }
-
-    public int getTmp() { return tmp; }
-    public void setTmp(int tmp) { this.tmp = tmp; }
-
-    public int getPop() { return pop; }
-    public void setPop(int pop) { this.pop = pop; }
-
-    public int getSky() { return sky; }
-    public void setSky(int sky) { this.sky = sky; }
-
-    public int getWsd() { return wsd; }
-    public void setWsd(int wsd) { this.wsd = wsd; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String baseDate;    // 기준 날짜
+    
+    @Column(nullable = false)
+    private String baseTime;    // 기준 시간
+    
+    @Column(nullable = false)
+    private String nx;          // 격자 X 좌표
+    
+    @Column(nullable = false)
+    private String ny;          // 격자 Y 좌표
+    
+    @Column(nullable = false)
+    private LocalDateTime forecastTime; // 예보 시간
+    
+    @Column(length = 1000)
+    private String weatherData; // 기상 데이터 (JSON 형태)
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt; // 생성 시간
 }

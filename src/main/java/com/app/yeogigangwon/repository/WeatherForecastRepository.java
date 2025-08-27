@@ -1,11 +1,30 @@
 package com.app.yeogigangwon.repository;
 
 import com.app.yeogigangwon.domain.WeatherForecast;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public interface WeatherForecastRepository extends MongoRepository<WeatherForecast, String> {
-    Optional<WeatherForecast> findTopByNxAndNyOrderByBaseDateDescBaseTimeDesc(int nx, int ny);
-    Optional<WeatherForecast> findTopByNxAndNyOrderByCreatedAtDesc(int nx, int ny);
+/**
+ * 기상 예보 데이터 접근을 위한 JPA Repository
+ */
+@Repository
+public interface WeatherForecastRepository extends JpaRepository<WeatherForecast, Long> {
+    
+    /**
+     * 특정 격자 좌표의 최신 기상 예보 조회
+     */
+    @Query("SELECT w FROM WeatherForecast w " +
+           "WHERE w.nx = :nx AND w.ny = :ny " +
+           "ORDER BY w.forecastTime DESC")
+    List<WeatherForecast> findLatestByGrid(@Param("nx") String nx, @Param("ny") String ny);
+    
+    /**
+     * 특정 시간 이후의 기상 예보 조회
+     */
+    List<WeatherForecast> findByForecastTimeAfterOrderByForecastTime(LocalDateTime time);
 }

@@ -1,45 +1,37 @@
 package com.app.yeogigangwon.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 
-@Getter
-@Setter
-@Document(collection = "tour_places")
+/**
+ * 관광지 정보를 저장하는 MySQL 엔티티
+ * 관광지의 기본 정보와 혼잡도 정보를 포함
+ */
+@Entity
+@Table(name = "tour_places")
+@Data
+@NoArgsConstructor
 public class TourPlace {
 
     @Id
-    private String id;
-    private String name;
-    private String category;
-    private String location;
-    private int crowdLevel;
-
-    public TourPlace() {}
-
-    public TourPlace(String id, String name, String category, String location, int crowdLevel) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.location = location;
-        this.crowdLevel = crowdLevel;
-    }
-
-    // Getter & Setter
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public int getCrowdLevel() { return crowdLevel; }
-    public void setCrowdLevel(int crowdLevel) { this.crowdLevel = crowdLevel; }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String name;        // 관광지명
+    
+    @Column(length = 1000)
+    private String description; // 관광지 설명
+    
+    @Column(columnDefinition = "DOUBLE")
+    private Double latitude;    // 위도
+    
+    @Column(columnDefinition = "DOUBLE")
+    private Double longitude;   // 경도
+    
+    private String category;    // 관광지 카테고리 (해변, 산, 문화재 등)
+    
+    private Integer crowdLevel; // 혼잡도 (1-5, 1:여유, 5:매우혼잡)
 }
