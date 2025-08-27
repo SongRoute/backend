@@ -1,32 +1,36 @@
 services:
-   mysql:
-     image: 'mysql:8.0'
-     environment:
-       - 'MYSQL_DATABASE=yeogigangwon'
-       - 'MYSQL_ROOT_PASSWORD=sdsqkqh55'
-     ports:
-       - '3306:3306'
-     volumes:
-       - mysql_data:/var/lib/mysql
-   python-api:
-     build:
+  mysql:
+    image: 'mysql:8.0'
+    environment:
+      - 'MYSQL_DATABASE=yeogigangwon'
+      - 'MYSQL_ROOT_PASSWORD=sdsqkqh55'
+      - 'MYSQL_USER=appuser'
+      - 'MYSQL_PASSWORD=sdsqkqh'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  python-api:
+    build:
       context: ./python-api
       dockerfile: Dockerfile
-     ports:
-       - '5000:5000'
-     volumes:
-       - ./python-api:/app
-     restart: unless-stopped
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./python-api:/app
+    restart: unless-stopped
 
-   backend-app:
-     build:
-       context: . # 현재 프로젝트 루트 디렉터리에서 Dockerfile을 찾음
-     ports:
-       - '8080:8080' # Spring Boot 기본 포트
-     depends_on:
-       - mysql
-       - python-api
-     environment:
-       - TZ=Asia/Seoul
+  backend-app:
+    build:
+      context: . # 현재 프로젝트 루트 디렉터리에서 Dockerfile을 찾음
+    ports:
+      - '8080:8080' # Spring Boot 기본 포트
+    depends_on:
+      - mysql
+      - python-api
+    environment:
+      - TZ=Asia/Seoul
+
 volumes:
   mysql_data:
