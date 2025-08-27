@@ -1,0 +1,6 @@
+# backend/python-api/requirements.txt
+ultralytics
+torch
+Flask
+requests
+opencv-python

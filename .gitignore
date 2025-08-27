@@ -38,3 +38,7 @@ node_modules/
 
 ### VS Code ###
 .vscode/
+
+
+# python-api
+venv/
