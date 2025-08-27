@@ -1,5 +1,4 @@
-//Spring Security가 비활성화 -> 로그인 없이 API 사용 가능
-
+// Spring Security 비활성화 상태
 package com.app.yeogigangwon.config;
 
 import org.springframework.context.annotation.Bean;
@@ -9,13 +8,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())           // CSRF 보호 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .anyRequest().permitAll()       // 모든 요청 허용
                 );
         return http.build();
     }

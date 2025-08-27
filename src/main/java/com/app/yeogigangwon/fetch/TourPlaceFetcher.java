@@ -35,14 +35,25 @@ public class TourPlaceFetcher {
             List<TourPlace> tourPlaces = new ArrayList<>();
 
             for (Map<String, Object> item : itemList) {
-                String id = String.valueOf(item.get("contentid"));
+                String contentId = String.valueOf(item.get("contentid"));
                 String name = (String) item.get("title");
-                String location = (String) item.getOrDefault("addr1", "주소 없음");
+                String description = (String) item.getOrDefault("addr1", "주소 없음");
 
                 // 실내/실외 분류
                 String placeType = classifyPlaceType(name);
 
-                TourPlace place = new TourPlace(id, name, placeType, location, 0); // category에 실내/실외
+                // TourPlace 객체 생성 (MySQL 버전)
+                TourPlace place = new TourPlace();
+                place.setName(name);
+                place.setDescription(description);
+                place.setCategory(placeType);
+                place.setCrowdLevel(0); // 기본 혼잡도
+                
+                // 위도/경도는 API에서 제공하지 않으므로 null로 설정
+                // 실제 운영에서는 별도 API로 좌표를 가져와야 함
+                place.setLatitude(null);
+                place.setLongitude(null);
+                
                 tourPlaces.add(place);
             }
 
