@@ -1,6 +1,7 @@
 services:
   mysql:
     image: 'mysql:8.0'
+    container_name: backend-mysql # 컨테이너 이름 지정
     environment:
       - 'MYSQL_DATABASE=yeogigangwon'
       - 'MYSQL_ROOT_PASSWORD=sdsqkqh55'
@@ -10,11 +11,19 @@ services:
       - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+    # [추가] DB가 준비될 때까지 기다리게 하는 Health Check 기능
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "appuser", "-p'sdsqkqh'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   python-api:
     build:
       context: ./python-api
       dockerfile: Dockerfile
+    container_name: backend-python-api # 컨테이너 이름 지정
     ports:
       - '5000:5000'
     volumes:
@@ -24,12 +33,23 @@ services:
   backend-app:
     build:
       context: . # 현재 프로젝트 루트 디렉터리에서 Dockerfile을 찾음
+    container_name: backend-app # 컨테이너 이름 지정
     ports:
       - '8080:8080' # Spring Boot 기본 포트
+    # [수정] mysql 서비스가 healthy 상태가 된 후 실행되도록 변경
     depends_on:
-      - mysql
-      - python-api
+      mysql:
+        condition: service_healthy
+      python-api:
+        condition: service_started
+    # [추가] .env 파일의 변수들을 컨테이너 환경 변수로 로드
+    env_file:
+      - ./.env
+    # [수정] 환경 변수 추가 및 DB 정보 명시
     environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/yeogigangwon?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=sdsqkqh
       - TZ=Asia/Seoul
 
 volumes:
