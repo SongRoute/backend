@@ -1,4 +1,3 @@
-// backend/src/main/java/com/app/yeogigangwon/dto/CongestionDto.java
 package com.app.yeogigangwon.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,7 +11,6 @@ import lombok.ToString;
 
 public class CongestionDto {
 
-    // CCTV 정보를 담는 DTO (내부 사용용: 필요 시에만 Setter)
     @Getter
     @Setter
     @NoArgsConstructor
@@ -25,10 +23,9 @@ public class CongestionDto {
         private String cctvUrl;
     }
 
-    // Python API의 분석 결과를 담는 DTO
-    // person_count → personCount로 명시 매핑!
+
     @Getter
-    @Setter // 역직렬화 시 값 주입을 위해 필요
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
@@ -38,7 +35,6 @@ public class CongestionDto {
         private int personCount;
     }
 
-    // 최종 혼잡도 상태를 담는 DTO (클라이언트 응답용)
     @Getter
     @Setter
     @NoArgsConstructor
@@ -47,7 +43,7 @@ public class CongestionDto {
     public static class CrowdStatus {
         private String beachId;
         private String beachName;
-        private String status; // 여유, 보통, 혼잡
+        private String status;
         private int personCount;
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
