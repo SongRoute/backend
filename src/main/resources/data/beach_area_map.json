@@ -1,0 +1,1090 @@
+{
+  "강문": {
+    "beach_name_std": "강문",
+    "sand_area_m2": 16200
+  },
+  "경포대": {
+    "beach_name_std": "경포대",
+    "sand_area_m2": 126000
+  },
+  "금진": {
+    "beach_name_std": "금진",
+    "sand_area_m2": 37400
+  },
+  "남항진": {
+    "beach_name_std": "남항진",
+    "sand_area_m2": 16450
+  },
+  "도직": {
+    "beach_name_std": "도직",
+    "sand_area_m2": 18480
+  },
+  "등명": {
+    "beach_name_std": "등명",
+    "sand_area_m2": 26460
+  },
+  "사근진": {
+    "beach_name_std": "사근진",
+    "sand_area_m2": 23240
+  },
+  "사천": {
+    "beach_name_std": "사천",
+    "sand_area_m2": 12150
+  },
+  "사천진": {
+    "beach_name_std": "사천진",
+    "sand_area_m2": 38760
+  },
+  "송정": {
+    "beach_name_std": "송정",
+    "sand_area_m2": 12420
+  },
+  "순긋": {
+    "beach_name_std": "순긋",
+    "sand_area_m2": 14400
+  },
+  "안목": {
+    "beach_name_std": "안목",
+    "sand_area_m2": 16800
+  },
+  "안인": {
+    "beach_name_std": "안인",
+    "sand_area_m2": 4500
+  },
+  "연곡": {
+    "beach_name_std": "연곡",
+    "sand_area_m2": 32250
+  },
+  "염전": {
+    "beach_name_std": "염전",
+    "sand_area_m2": 20790
+  },
+  "영진": {
+    "beach_name_std": "영진",
+    "sand_area_m2": 17100
+  },
+  "옥계": {
+    "beach_name_std": "옥계",
+    "sand_area_m2": 74200
+  },
+  "정동진": {
+    "beach_name_std": "정동진",
+    "sand_area_m2": 83000
+  },
+  "주문진해변": {
+    "beach_name_std": "주문진해변",
+    "sand_area_m2": 80771
+  },
+  "하평": {
+    "beach_name_std": "하평",
+    "sand_area_m2": 12240
+  },
+  "가진진": {
+    "beach_name_std": "가진진",
+    "sand_area_m2": 23805
+  },
+  "거진11리": {
+    "beach_name_std": "거진11리",
+    "sand_area_m2": 17834
+  },
+  "거진1리": {
+    "beach_name_std": "거진1리",
+    "sand_area_m2": 5225
+  },
+  "공현진1리": {
+    "beach_name_std": "공현진1리",
+    "sand_area_m2": 36000
+  },
+  "공현진2리": {
+    "beach_name_std": "공현진2리",
+    "sand_area_m2": 17820
+  },
+  "교암리": {
+    "beach_name_std": "교암리",
+    "sand_area_m2": 22815
+  },
+  "대진1리": {
+    "beach_name_std": "대진1리",
+    "sand_area_m2": 11565
+  },
+  "대진5리": {
+    "beach_name_std": "대진5리",
+    "sand_area_m2": 1920
+  },
+  "마차진": {
+    "beach_name_std": "마차진",
+    "sand_area_m2": 6138
+  },
+  "명파리": {
+    "beach_name_std": "명파리",
+    "sand_area_m2": 6028
+  },
+  "문암진2리": {
+    "beach_name_std": "문암진2리",
+    "sand_area_m2": 18724
+  },
+  "문암캠핑장": {
+    "beach_name_std": "문암캠핑장",
+    "sand_area_m2": 28965
+  },
+  "반암리": {
+    "beach_name_std": "반암리",
+    "sand_area_m2": 43800
+  },
+  "백도": {
+    "beach_name_std": "백도",
+    "sand_area_m2": 30600
+  },
+  "봉수대": {
+    "beach_name_std": "봉수대",
+    "sand_area_m2": 10166
+  },
+  "봉포리": {
+    "beach_name_std": "봉포리",
+    "sand_area_m2": 35805
+  },
+  "삼포": {
+    "beach_name_std": "삼포",
+    "sand_area_m2": 23856
+  },
+  "삼포2리": {
+    "beach_name_std": "삼포2리",
+    "sand_area_m2": 34560
+  },
+  "송지호": {
+    "beach_name_std": "송지호",
+    "sand_area_m2": 14520
+  },
+  "송지호오토캠핑장": {
+    "beach_name_std": "송지호오토캠핑장",
+    "sand_area_m2": 8880
+  },
+  "아야진리": {
+    "beach_name_std": "아야진리",
+    "sand_area_m2": 23310
+  },
+  "자작도": {
+    "beach_name_std": "자작도",
+    "sand_area_m2": 20900
+  },
+  "천진리": {
+    "beach_name_std": "천진리",
+    "sand_area_m2": 9928
+  },
+  "청간리": {
+    "beach_name_std": "청간리",
+    "sand_area_m2": 20988
+  },
+  "초도리": {
+    "beach_name_std": "초도리",
+    "sand_area_m2": 21054
+  },
+  "켄싱턴리조트": {
+    "beach_name_std": "켄싱턴리조트",
+    "sand_area_m2": 103267
+  },
+  "화진포": {
+    "beach_name_std": "화진포",
+    "sand_area_m2": 90289
+  },
+  "화진포콘도": {
+    "beach_name_std": "화진포콘도",
+    "sand_area_m2": 12000
+  },
+  "노봉": {
+    "beach_name_std": "노봉",
+    "sand_area_m2": 39000
+  },
+  "대진": {
+    "beach_name_std": "대진",
+    "sand_area_m2": 14950
+  },
+  "망상": {
+    "beach_name_std": "망상",
+    "sand_area_m2": 145000
+  },
+  "망상리조트": {
+    "beach_name_std": "망상리조트",
+    "sand_area_m2": 28800
+  },
+  "어달": {
+    "beach_name_std": "어달",
+    "sand_area_m2": 6000
+  },
+  "추암": {
+    "beach_name_std": "추암",
+    "sand_area_m2": 18000
+  },
+  "궁촌": {
+    "beach_name_std": "궁촌",
+    "sand_area_m2": 16000
+  },
+  "덕산": {
+    "beach_name_std": "덕산",
+    "sand_area_m2": 25000
+  },
+  "맹방": {
+    "beach_name_std": "맹방",
+    "sand_area_m2": 59200
+  },
+  "문암": {
+    "beach_name_std": "문암",
+    "sand_area_m2": 9000
+  },
+  "부남": {
+    "beach_name_std": "부남",
+    "sand_area_m2": 6000
+  },
+  "삼척": {
+    "beach_name_std": "삼척",
+    "sand_area_m2": 81840
+  },
+  "상맹방": {
+    "beach_name_std": "상맹방",
+    "sand_area_m2": 8000
+  },
+  "오분(간이)": {
+    "beach_name_std": "오분(간이)",
+    "sand_area_m2": 4000
+  },
+  "용화": {
+    "beach_name_std": "용화",
+    "sand_area_m2": 25000
+  },
+  "원평": {
+    "beach_name_std": "원평",
+    "sand_area_m2": 9000
+  },
+  "임원": {
+    "beach_name_std": "임원",
+    "sand_area_m2": 2250
+  },
+  "작은후진": {
+    "beach_name_std": "작은후진",
+    "sand_area_m2": 3000
+  },
+  "장호": {
+    "beach_name_std": "장호",
+    "sand_area_m2": 12000
+  },
+  "증산": {
+    "beach_name_std": "증산",
+    "sand_area_m2": 8000
+  },
+  "하맹방": {
+    "beach_name_std": "하맹방",
+    "sand_area_m2": 20000
+  },
+  "한재밑": {
+    "beach_name_std": "한재밑",
+    "sand_area_m2": 16000
+  },
+  "등대": {
+    "beach_name_std": "등대",
+    "sand_area_m2": 11957
+  },
+  "속초": {
+    "beach_name_std": "속초",
+    "sand_area_m2": 40129
+  },
+  "외옹치": {
+    "beach_name_std": "외옹치",
+    "sand_area_m2": 10842
+  },
+  "갯마을": {
+    "beach_name_std": "갯마을",
+    "sand_area_m2": 9300
+  },
+  "광진": {
+    "beach_name_std": "광진",
+    "sand_area_m2": 25785
+  },
+  "기사문": {
+    "beach_name_std": "기사문",
+    "sand_area_m2": 14800
+  },
+  "낙산": {
+    "beach_name_std": "낙산",
+    "sand_area_m2": 139308
+  },
+  "남애1": {
+    "beach_name_std": "남애1",
+    "sand_area_m2": 11880
+  },
+  "남애3": {
+    "beach_name_std": "남애3",
+    "sand_area_m2": 38808
+  },
+  "동산": {
+    "beach_name_std": "동산",
+    "sand_area_m2": 11220
+  },
+  "동산포": {
+    "beach_name_std": "동산포",
+    "sand_area_m2": 14500
+  },
+  "동호": {
+    "beach_name_std": "동호",
+    "sand_area_m2": 16240
+  },
+  "물치": {
+    "beach_name_std": "물치",
+    "sand_area_m2": 16590
+  },
+  "북분": {
+    "beach_name_std": "북분",
+    "sand_area_m2": 17550
+  },
+  "설악": {
+    "beach_name_std": "설악",
+    "sand_area_m2": 33972
+  },
+  "송전": {
+    "beach_name_std": "송전",
+    "sand_area_m2": 32220
+  },
+  "원포": {
+    "beach_name_std": "원포",
+    "sand_area_m2": 14400
+  },
+  "인구": {
+    "beach_name_std": "인구",
+    "sand_area_m2": 17816
+  },
+  "잔교": {
+    "beach_name_std": "잔교",
+    "sand_area_m2": 9510
+  },
+  "정암": {
+    "beach_name_std": "정암",
+    "sand_area_m2": 14400
+  },
+  "죽도": {
+    "beach_name_std": "죽도",
+    "sand_area_m2": 8220
+  },
+  "중광정": {
+    "beach_name_std": "중광정",
+    "sand_area_m2": 12400
+  },
+  "지경": {
+    "beach_name_std": "지경",
+    "sand_area_m2": 25300
+  },
+  "하조대": {
+    "beach_name_std": "하조대",
+    "sand_area_m2": 37800
+  },
+  "구영": {
+    "beach_name_std": "구영",
+    "sand_area_m2": 3916
+  },
+  "구조라": {
+    "beach_name_std": "구조라",
+    "sand_area_m2": 21275
+  },
+  "농소": {
+    "beach_name_std": "농소",
+    "sand_area_m2": 35464
+  },
+  "덕원": {
+    "beach_name_std": "덕원",
+    "sand_area_m2": 7479
+  },
+  "덕포": {
+    "beach_name_std": "덕포",
+    "sand_area_m2": 9812
+  },
+  "망치": {
+    "beach_name_std": "망치",
+    "sand_area_m2": 8874
+  },
+  "명사": {
+    "beach_name_std": "명사",
+    "sand_area_m2": 10234
+  },
+  "물안": {
+    "beach_name_std": "물안",
+    "sand_area_m2": 4920
+  },
+  "사곡": {
+    "beach_name_std": "사곡",
+    "sand_area_m2": 12818
+  },
+  "여차": {
+    "beach_name_std": "여차",
+    "sand_area_m2": 5542
+  },
+  "와현모래숲": {
+    "beach_name_std": "와현모래숲",
+    "sand_area_m2": 19482
+  },
+  "죽림": {
+    "beach_name_std": "죽림",
+    "sand_area_m2": 7750
+  },
+  "학동흑진주몽돌": {
+    "beach_name_std": "학동흑진주몽돌",
+    "sand_area_m2": 44968
+  },
+  "함목": {
+    "beach_name_std": "함목",
+    "sand_area_m2": 9880
+  },
+  "황포": {
+    "beach_name_std": "황포",
+    "sand_area_m2": 4260
+  },
+  "흥남": {
+    "beach_name_std": "흥남",
+    "sand_area_m2": 11288
+  },
+  "두곡월포": {
+    "beach_name_std": "두곡월포",
+    "sand_area_m2": 25500
+  },
+  "사촌": {
+    "beach_name_std": "사촌",
+    "sand_area_m2": 9000
+  },
+  "상주은모래비치": {
+    "beach_name_std": "상주은모래비치",
+    "sand_area_m2": 115500
+  },
+  "설리": {
+    "beach_name_std": "설리",
+    "sand_area_m2": 13760
+  },
+  "송정솔바람해변": {
+    "beach_name_std": "송정솔바람해변",
+    "sand_area_m2": 30250
+  },
+  "남일대": {
+    "beach_name_std": "남일대",
+    "sand_area_m2": 16625
+  },
+  "광암": {
+    "beach_name_std": "광암",
+    "sand_area_m2": 6600
+  },
+  "비진도": {
+    "beach_name_std": "비진도",
+    "sand_area_m2": 6340
+  },
+  "사량도대항": {
+    "beach_name_std": "사량도대항",
+    "sand_area_m2": 1540
+  },
+  "수륙": {
+    "beach_name_std": "수륙",
+    "sand_area_m2": 2990
+  },
+  "관성": {
+    "beach_name_std": "관성",
+    "sand_area_m2": 36348
+  },
+  "나정": {
+    "beach_name_std": "나정",
+    "sand_area_m2": 19916
+  },
+  "봉길대왕암": {
+    "beach_name_std": "봉길대왕암",
+    "sand_area_m2": 18830
+  },
+  "오류": {
+    "beach_name_std": "오류",
+    "sand_area_m2": 29106
+  },
+  "전촌": {
+    "beach_name_std": "전촌",
+    "sand_area_m2": 36192
+  },
+  "경정": {
+    "beach_name_std": "경정",
+    "sand_area_m2": 6300
+  },
+  "고래불": {
+    "beach_name_std": "고래불",
+    "sand_area_m2": 244000
+  },
+  "남호": {
+    "beach_name_std": "남호",
+    "sand_area_m2": 7000
+  },
+  "오보": {
+    "beach_name_std": "오보",
+    "sand_area_m2": 5000
+  },
+  "장사": {
+    "beach_name_std": "장사",
+    "sand_area_m2": 19200
+  },
+  "하저": {
+    "beach_name_std": "하저",
+    "sand_area_m2": 10450
+  },
+  "구산": {
+    "beach_name_std": "구산",
+    "sand_area_m2": 23400
+  },
+  "기성망양": {
+    "beach_name_std": "기성망양",
+    "sand_area_m2": 38760
+  },
+  "나곡": {
+    "beach_name_std": "나곡",
+    "sand_area_m2": 9000
+  },
+  "망양정": {
+    "beach_name_std": "망양정",
+    "sand_area_m2": 27405
+  },
+  "봉평": {
+    "beach_name_std": "봉평",
+    "sand_area_m2": 7850
+  },
+  "후정": {
+    "beach_name_std": "후정",
+    "sand_area_m2": 12110
+  },
+  "후포": {
+    "beach_name_std": "후포",
+    "sand_area_m2": 15075
+  },
+  "구룡포": {
+    "beach_name_std": "구룡포",
+    "sand_area_m2": 20000
+  },
+  "도구": {
+    "beach_name_std": "도구",
+    "sand_area_m2": 31200
+  },
+  "영일대": {
+    "beach_name_std": "영일대",
+    "sand_area_m2": 383250
+  },
+  "월포": {
+    "beach_name_std": "월포",
+    "sand_area_m2": 107800
+  },
+  "칠포": {
+    "beach_name_std": "칠포",
+    "sand_area_m2": 324000
+  },
+  "화진": {
+    "beach_name_std": "화진",
+    "sand_area_m2": 56250
+  },
+  "일광": {
+    "beach_name_std": "일광",
+    "sand_area_m2": 16200
+  },
+  "임랑": {
+    "beach_name_std": "임랑",
+    "sand_area_m2": 10650
+  },
+  "다대포": {
+    "beach_name_std": "다대포",
+    "sand_area_m2": 127500
+  },
+  "송도": {
+    "beach_name_std": "송도",
+    "sand_area_m2": 48000
+  },
+  "광안리": {
+    "beach_name_std": "광안리",
+    "sand_area_m2": 71400
+  },
+  "해운대": {
+    "beach_name_std": "해운대",
+    "sand_area_m2": 120000
+  },
+  "일산": {
+    "beach_name_std": "일산",
+    "sand_area_m2": 34230
+  },
+  "진하": {
+    "beach_name_std": "진하",
+    "sand_area_m2": 38500
+  },
+  "떼뿌루": {
+    "beach_name_std": "떼뿌루",
+    "sand_area_m2": 10686
+  },
+  "서포리": {
+    "beach_name_std": "서포리",
+    "sand_area_m2": 43720
+  },
+  "수기": {
+    "beach_name_std": "수기",
+    "sand_area_m2": 10983
+  },
+  "십리포": {
+    "beach_name_std": "십리포",
+    "sand_area_m2": 6474
+  },
+  "옹암": {
+    "beach_name_std": "옹암",
+    "sand_area_m2": 18040
+  },
+  "이일레": {
+    "beach_name_std": "이일레",
+    "sand_area_m2": 14880
+  },
+  "장경리": {
+    "beach_name_std": "장경리",
+    "sand_area_m2": 10164
+  },
+  "장골": {
+    "beach_name_std": "장골",
+    "sand_area_m2": 61410
+  },
+  "왕산": {
+    "beach_name_std": "왕산",
+    "sand_area_m2": 27825
+  },
+  "을왕리": {
+    "beach_name_std": "을왕리",
+    "sand_area_m2": 52650
+  },
+  "하나개": {
+    "beach_name_std": "하나개",
+    "sand_area_m2": 45500
+  },
+  "금장": {
+    "beach_name_std": "금장",
+    "sand_area_m2": 10000
+  },
+  "나로우주": {
+    "beach_name_std": "나로우주",
+    "sand_area_m2": 30000
+  },
+  "남열해돋이": {
+    "beach_name_std": "남열해돋이",
+    "sand_area_m2": 64000
+  },
+  "대전": {
+    "beach_name_std": "대전",
+    "sand_area_m2": 63000
+  },
+  "덕흥": {
+    "beach_name_std": "덕흥",
+    "sand_area_m2": 25000
+  },
+  "발포": {
+    "beach_name_std": "발포",
+    "sand_area_m2": 21000
+  },
+  "연소": {
+    "beach_name_std": "연소",
+    "sand_area_m2": 12000
+  },
+  "염포": {
+    "beach_name_std": "염포",
+    "sand_area_m2": 15000
+  },
+  "용동": {
+    "beach_name_std": "용동",
+    "sand_area_m2": 8000
+  },
+  "익금": {
+    "beach_name_std": "익금",
+    "sand_area_m2": 45000
+  },
+  "풍류": {
+    "beach_name_std": "풍류",
+    "sand_area_m2": 25000
+  },
+  "외달도": {
+    "beach_name_std": "외달도",
+    "sand_area_m2": 7800
+  },
+  "톱머리": {
+    "beach_name_std": "톱머리",
+    "sand_area_m2": 10000
+  },
+  "홀통": {
+    "beach_name_std": "홀통",
+    "sand_area_m2": 9000
+  },
+  "율포솔밭": {
+    "beach_name_std": "율포솔밭",
+    "sand_area_m2": 54000
+  },
+  "대광": {
+    "beach_name_std": "대광",
+    "sand_area_m2": 1200000
+  },
+  "돈목": {
+    "beach_name_std": "돈목",
+    "sand_area_m2": 42400
+  },
+  "배낭기미": {
+    "beach_name_std": "배낭기미",
+    "sand_area_m2": 6000
+  },
+  "백길": {
+    "beach_name_std": "백길",
+    "sand_area_m2": 81000
+  },
+  "분계": {
+    "beach_name_std": "분계",
+    "sand_area_m2": 60000
+  },
+  "설레미": {
+    "beach_name_std": "설레미",
+    "sand_area_m2": 27872
+  },
+  "시목": {
+    "beach_name_std": "시목",
+    "sand_area_m2": 64200
+  },
+  "신도": {
+    "beach_name_std": "신도",
+    "sand_area_m2": 6000
+  },
+  "우전": {
+    "beach_name_std": "우전",
+    "sand_area_m2": 60000
+  },
+  "짱뚱어": {
+    "beach_name_std": "짱뚱어",
+    "sand_area_m2": 60000
+  },
+  "추포": {
+    "beach_name_std": "추포",
+    "sand_area_m2": 24000
+  },
+  "하트": {
+    "beach_name_std": "하트",
+    "sand_area_m2": 14000
+  },
+  "홍도": {
+    "beach_name_std": "홍도",
+    "sand_area_m2": 3600
+  },
+  "황성금리": {
+    "beach_name_std": "황성금리",
+    "sand_area_m2": 9100
+  },
+  "만성리": {
+    "beach_name_std": "만성리",
+    "sand_area_m2": 36750
+  },
+  "모사금": {
+    "beach_name_std": "모사금",
+    "sand_area_m2": 6750
+  },
+  "무슬목": {
+    "beach_name_std": "무슬목",
+    "sand_area_m2": 10000
+  },
+  "방죽포": {
+    "beach_name_std": "방죽포",
+    "sand_area_m2": 7425
+  },
+  "안도": {
+    "beach_name_std": "안도",
+    "sand_area_m2": 4000
+  },
+  "웅천": {
+    "beach_name_std": "웅천",
+    "sand_area_m2": 10950
+  },
+  "유림(거문도)": {
+    "beach_name_std": "유림(거문도)",
+    "sand_area_m2": 2700
+  },
+  "장등": {
+    "beach_name_std": "장등",
+    "sand_area_m2": 8000
+  },
+  "가마미": {
+    "beach_name_std": "가마미",
+    "sand_area_m2": 200000
+  },
+  "송이도": {
+    "beach_name_std": "송이도",
+    "sand_area_m2": 20000
+  },
+  "금일명사십리": {
+    "beach_name_std": "금일명사십리",
+    "sand_area_m2": 875000
+  },
+  "보길예송": {
+    "beach_name_std": "보길예송",
+    "sand_area_m2": 30000
+  },
+  "보길중리": {
+    "beach_name_std": "보길중리",
+    "sand_area_m2": 45000
+  },
+  "보길통리": {
+    "beach_name_std": "보길통리",
+    "sand_area_m2": 24000
+  },
+  "생일금곡": {
+    "beach_name_std": "생일금곡",
+    "sand_area_m2": 25000
+  },
+  "신지동고": {
+    "beach_name_std": "신지동고",
+    "sand_area_m2": 60000
+  },
+  "신지명사십리": {
+    "beach_name_std": "신지명사십리",
+    "sand_area_m2": 570000
+  },
+  "약산가사": {
+    "beach_name_std": "약산가사",
+    "sand_area_m2": 7500
+  },
+  "청산신흥": {
+    "beach_name_std": "청산신흥",
+    "sand_area_m2": 68000
+  },
+  "청산지리": {
+    "beach_name_std": "청산지리",
+    "sand_area_m2": 120000
+  },
+  "수문": {
+    "beach_name_std": "수문",
+    "sand_area_m2": 8750
+  },
+  "가계": {
+    "beach_name_std": "가계",
+    "sand_area_m2": 28000
+  },
+  "관매도": {
+    "beach_name_std": "관매도",
+    "sand_area_m2": 28000
+  },
+  "금갑": {
+    "beach_name_std": "금갑",
+    "sand_area_m2": 30000
+  },
+  "신전": {
+    "beach_name_std": "신전",
+    "sand_area_m2": 64000
+  },
+  "돌머리": {
+    "beach_name_std": "돌머리",
+    "sand_area_m2": 18000
+  },
+  "사구미": {
+    "beach_name_std": "사구미",
+    "sand_area_m2": 26400
+  },
+  "송호": {
+    "beach_name_std": "송호",
+    "sand_area_m2": 88800
+  },
+  "구시포": {
+    "beach_name_std": "구시포",
+    "sand_area_m2": 700000
+  },
+  "선유도": {
+    "beach_name_std": "선유도",
+    "sand_area_m2": 60000
+  },
+  "격포": {
+    "beach_name_std": "격포",
+    "sand_area_m2": 25000
+  },
+  "고사포": {
+    "beach_name_std": "고사포",
+    "sand_area_m2": 96000
+  },
+  "모항": {
+    "beach_name_std": "모항",
+    "sand_area_m2": 30000
+  },
+  "변산": {
+    "beach_name_std": "변산",
+    "sand_area_m2": 97500
+  },
+  "위도": {
+    "beach_name_std": "위도",
+    "sand_area_m2": 75000
+  },
+  "곽지": {
+    "beach_name_std": "곽지",
+    "sand_area_m2": 40000
+  },
+  "금능": {
+    "beach_name_std": "금능",
+    "sand_area_m2": 45000
+  },
+  "김녕": {
+    "beach_name_std": "김녕",
+    "sand_area_m2": 40000
+  },
+  "삼양": {
+    "beach_name_std": "삼양",
+    "sand_area_m2": 18400
+  },
+  "월정": {
+    "beach_name_std": "월정",
+    "sand_area_m2": 30000
+  },
+  "이호": {
+    "beach_name_std": "이호",
+    "sand_area_m2": 32500
+  },
+  "함덕": {
+    "beach_name_std": "함덕",
+    "sand_area_m2": 28800
+  },
+  "협재": {
+    "beach_name_std": "협재",
+    "sand_area_m2": 80000
+  },
+  "신양섭지": {
+    "beach_name_std": "신양섭지",
+    "sand_area_m2": 12000
+  },
+  "중문색달": {
+    "beach_name_std": "중문색달",
+    "sand_area_m2": 28000
+  },
+  "표선": {
+    "beach_name_std": "표선",
+    "sand_area_m2": 135000
+  },
+  "화순금모래": {
+    "beach_name_std": "화순금모래",
+    "sand_area_m2": 16000
+  },
+  "왜목마을": {
+    "beach_name_std": "왜목마을",
+    "sand_area_m2": 76500
+  },
+  "난지섬": {
+    "beach_name_std": "난지섬",
+    "sand_area_m2": 84500
+  },
+  "대천": {
+    "beach_name_std": "대천",
+    "sand_area_m2": 350000
+  },
+  "무창포": {
+    "beach_name_std": "무창포",
+    "sand_area_m2": 150000
+  },
+  "춘장대": {
+    "beach_name_std": "춘장대",
+    "sand_area_m2": 75000
+  },
+  "갈음이": {
+    "beach_name_std": "갈음이",
+    "sand_area_m2": 11750
+  },
+  "곰섬": {
+    "beach_name_std": "곰섬",
+    "sand_area_m2": 9000
+  },
+  "구례포": {
+    "beach_name_std": "구례포",
+    "sand_area_m2": 29100
+  },
+  "구름포": {
+    "beach_name_std": "구름포",
+    "sand_area_m2": 10500
+  },
+  "기지포": {
+    "beach_name_std": "기지포",
+    "sand_area_m2": 37400
+  },
+  "꽃지": {
+    "beach_name_std": "꽃지",
+    "sand_area_m2": 128000
+  },
+  "꾸지나무골": {
+    "beach_name_std": "꾸지나무골",
+    "sand_area_m2": 5100
+  },
+  "달산포": {
+    "beach_name_std": "달산포",
+    "sand_area_m2": 16050
+  },
+  "마검포": {
+    "beach_name_std": "마검포",
+    "sand_area_m2": 29700
+  },
+  "만리포": {
+    "beach_name_std": "만리포",
+    "sand_area_m2": 60000
+  },
+  "몽산포": {
+    "beach_name_std": "몽산포",
+    "sand_area_m2": 44100
+  },
+  "바람아래": {
+    "beach_name_std": "바람아래",
+    "sand_area_m2": 20000
+  },
+  "밧개": {
+    "beach_name_std": "밧개",
+    "sand_area_m2": 29400
+  },
+  "방주골(백리포)": {
+    "beach_name_std": "방주골(백리포)",
+    "sand_area_m2": 14400
+  },
+  "방포": {
+    "beach_name_std": "방포",
+    "sand_area_m2": 22000
+  },
+  "백사장": {
+    "beach_name_std": "백사장",
+    "sand_area_m2": 14400
+  },
+  "삼봉": {
+    "beach_name_std": "삼봉",
+    "sand_area_m2": 32000
+  },
+  "샛별": {
+    "beach_name_std": "샛별",
+    "sand_area_m2": 27000
+  },
+  "신두리": {
+    "beach_name_std": "신두리",
+    "sand_area_m2": 66000
+  },
+  "안면": {
+    "beach_name_std": "안면",
+    "sand_area_m2": 32000
+  },
+  "어은돌": {
+    "beach_name_std": "어은돌",
+    "sand_area_m2": 23400
+  },
+  "연포": {
+    "beach_name_std": "연포",
+    "sand_area_m2": 27500
+  },
+  "의항": {
+    "beach_name_std": "의항",
+    "sand_area_m2": 13500
+  },
+  "장삼포": {
+    "beach_name_std": "장삼포",
+    "sand_area_m2": 41000
+  },
+  "천리포": {
+    "beach_name_std": "천리포",
+    "sand_area_m2": 22500
+  },
+  "청포대": {
+    "beach_name_std": "청포대",
+    "sand_area_m2": 25800
+  },
+  "파도리": {
+    "beach_name_std": "파도리",
+    "sand_area_m2": 20100
+  },
+  "학암포": {
+    "beach_name_std": "학암포",
+    "sand_area_m2": 44100
+  }
+}
