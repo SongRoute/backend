@@ -3,24 +3,118 @@ package com.app.yeogigangwon.controller;
 
 import com.app.yeogigangwon.dto.CongestionDto;
 import com.app.yeogigangwon.service.CongestionService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+// ⬇️ 새로 추가되는 서비스들
+import com.app.yeogigangwon.service.RealTimeCongestionService;
+import com.app.yeogigangwon.service.AreaMapService;
+import com.app.yeogigangwon.service.KtoService;
+
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*; // ✅ PostMapping, GetMapping, PathVariable, RequestBody, RequestParam
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map; // ✅ Map
 
 @RestController
 @RequestMapping("/api/congestion")
 @RequiredArgsConstructor
 public class CongestionController {
 
+    // ✅ 기존 서비스(기존 기능 유지)
     private final CongestionService congestionService;
 
+    // ✅ 새 기능을 위한 서비스들(추가 주입)
+    private final RealTimeCongestionService realTimeCongestionService;
+    private final AreaMapService areaMapService;
+    private final KtoService ktoService;
+
+    // ===== 기존 기능 (절대 수정하지 않음) =====
     @GetMapping("/status")
     public ResponseEntity<List<CongestionDto.CrowdStatus>> getCrowdStatus() {
         List<CongestionDto.CrowdStatus> statuses = congestionService.getCrowdStatus();
         return ResponseEntity.ok(statuses);
+    }
+
+    // ===== [추가1] YOLO → 해수욕장 실시간 혼잡도 업데이트 =====
+    @PostMapping("/beach/{beachId}")
+    public ResponseEntity<Map<String, Object>> updateFromYolo(
+            @PathVariable String beachId,
+            @RequestBody UpdateReq req
+    ) {
+        RealTimeCongestionService.State st =
+                realTimeCongestionService.update(beachId, req.getPersons(), req.getRoiRatio());
+
+        double effArea = Math.max(
+                areaMapService.getSandAreaM2(beachId) * (req.getRoiRatio() == null ? 1.0 : req.getRoiRatio()),
+                1e-6
+        );
+        double density = req.getPersons() / effArea;
+
+        return ResponseEntity.ok(Map.of(
+                "beach_id", beachId,
+                "level", st.level,
+                "persons", req.getPersons(),
+                "density_per_m2", round(density, 4),
+                "density_per_100m2", round(density * 100, 2),
+                "ema_density_per_m2", round(st.emaDensity, 4),
+                "method", "yolo_area"
+        ));
+    }
+
+    // ===== [추가2] 해수욕장 실시간 상태 조회(프론트 폴링용) =====
+    @GetMapping("/beach/{beachId}")
+    public ResponseEntity<Map<String, Object>> getBeach(@PathVariable String beachId) {
+        RealTimeCongestionService.State st = realTimeCongestionService.get(beachId);
+        double area = areaMapService.getSandAreaM2(beachId);
+
+        return ResponseEntity.ok(Map.of(
+                "beach_id", beachId,
+                "level", st.level,
+                "ema_density_per_m2", round(st.emaDensity, 4),
+                "area_m2", area,
+                "method", "yolo_area"
+        ));
+    }
+
+    // ===== [추가3] 비-CCTV(해변/관광지) – KTO 예측 기반 =====
+    @GetMapping("/place/{key}")
+    public ResponseEntity<Map<String, Object>> getPlaceByKto(
+            @PathVariable String key,
+            @RequestParam(required = false) String date
+    ) {
+        LocalDate d = (date == null) ? LocalDate.now() : LocalDate.parse(date);
+        double rate = ktoService.getRate(key, d).orElse(Double.NaN);
+        String level = ktoToLevel(rate);
+
+        return ResponseEntity.ok(Map.of(
+                "place_id", key,
+                "date", d.toString(),
+                "kto_rate", Double.isNaN(rate) ? null : rate,
+                "level", level,
+                "method", "kto"
+        ));
+    }
+
+    // ===== 내부 DTO/유틸 =====
+    @Data
+    public static class UpdateReq {
+        private int persons;
+        private Double roiRatio; // null이면 1.0
+    }
+
+    private static String ktoToLevel(double rate) {
+        if (Double.isNaN(rate)) return "예측없음";
+        if (rate < 34) return "여유";
+        if (rate < 67) return "보통";
+        return "혼잡";
+    }
+
+    private static double round(double v, int s) {
+        double p = Math.pow(10, s);
+        return Math.round(v * p) / p;
     }
 }
