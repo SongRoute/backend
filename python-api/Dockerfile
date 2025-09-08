@@ -1,6 +1,10 @@
-# backend/python-api/Dockerfile
+# Python 3.10 slim 이미지 기반으로 빌드
 FROM python:3.10-slim
+
+# 컨테이너 내부 작업 디렉토리 설정
 WORKDIR /app
+
+# OpenCV 및 이미지 처리를 위해 필요한 라이브러리 설치
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libsm6 \
@@ -9,7 +13,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt .
 RUN pip --default-timeout=1200 install --no-cache-dir -r requirements.txt
+
+# Flask API 서버 코드 복사
 COPY app.py .
+
+# YOLO 가중치 파일 복사 (모델 실행에 필요)
 COPY weights/best_m.pt ./weights/best_m.pt
+
+# Flask 서버가 열릴 포트 (5000) 노출
 EXPOSE 5000
+
+# 컨테이너 실행 시 app.py 실행 (Flask 서버 시작)
 CMD ["python", "app.py"]
