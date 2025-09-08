@@ -1,10 +1,8 @@
-// backend/src/main/java/com/app/yeogigangwon/controller/CongestionController.java
 package com.app.yeogigangwon.controller;
 
 import com.app.yeogigangwon.dto.CongestionDto;
 import com.app.yeogigangwon.service.CongestionService;
 
-// ⬇️ 새로 추가되는 서비스들
 import com.app.yeogigangwon.service.RealTimeCongestionService;
 import com.app.yeogigangwon.service.AreaMapService;
 import com.app.yeogigangwon.service.KtoService;
@@ -13,33 +11,31 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*; // ✅ PostMapping, GetMapping, PathVariable, RequestBody, RequestParam
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map; // ✅ Map
+import java.util.Map;
 
+// 혼잡도 관련 API 요청을 처리하는 컨트롤러
 @RestController
 @RequestMapping("/api/congestion")
 @RequiredArgsConstructor
 public class CongestionController {
 
-    // ✅ 기존 서비스(기존 기능 유지)
-    private final CongestionService congestionService;
+    private final CongestionService congestionService; // 종합 혼잡도
+    private final RealTimeCongestionService realTimeCongestionService; // 실시간 혼잡도(yolo)
+    private final AreaMapService areaMapService; // 해수욕장 면적
+    private final KtoService ktoService; // 한국관광공사(KTO) 데이터 서비스
 
-    // ✅ 새 기능을 위한 서비스들(추가 주입)
-    private final RealTimeCongestionService realTimeCongestionService;
-    private final AreaMapService areaMapService;
-    private final KtoService ktoService;
-
-    // ===== 기존 기능 (절대 수정하지 않음) =====
+    // cctv 제공 해수욕장 현재 혼잡도 상태 조회하는 API
     @GetMapping("/status")
     public ResponseEntity<List<CongestionDto.CrowdStatus>> getCrowdStatus() {
         List<CongestionDto.CrowdStatus> statuses = congestionService.getCrowdStatus();
         return ResponseEntity.ok(statuses);
     }
 
-    // ===== [추가1] YOLO → 해수욕장 실시간 혼잡도 업데이트 =====
+    // yolo로부터 받은 실시간 인원수로 특정 해변의 혼잡도를 갱신하고 조회
     @PostMapping("/beach/{beachId}")
     public ResponseEntity<Map<String, Object>> updateFromYolo(
             @PathVariable String beachId,
@@ -55,17 +51,16 @@ public class CongestionController {
         double density = req.getPersons() / effArea;
 
         return ResponseEntity.ok(Map.of(
-                "beach_id", beachId,
-                "level", st.level,
+                "beach_id", beachId, // 해변 ID
+                "level", st.level, // 혼잡도 단계 (여유, 보통, 혼잡)
                 "persons", req.getPersons(),
                 "density_per_m2", round(density, 4),
                 "density_per_100m2", round(density * 100, 2),
-                "ema_density_per_m2", round(st.emaDensity, 4),
-                "method", "yolo_area"
+                "ema_density_per_m2", round(st.emaDensity, 4), // 전체 면적
+                "method", "yolo_area" // 사용된 분석 방법 -> 없어도 될거같음
         ));
     }
 
-    // ===== [추가2] 해수욕장 실시간 상태 조회(프론트 폴링용) =====
     @GetMapping("/beach/{beachId}")
     public ResponseEntity<Map<String, Object>> getBeach(@PathVariable String beachId) {
         RealTimeCongestionService.State st = realTimeCongestionService.get(beachId);
@@ -80,7 +75,7 @@ public class CongestionController {
         ));
     }
 
-    // ===== [추가3] 비-CCTV(해변/관광지) – KTO 예측 기반 =====
+    // 한국관광공사(KTO) 기반 특정 관광지의 예측 혼잡도 조회하는 API
     @GetMapping("/place/{key}")
     public ResponseEntity<Map<String, Object>> getPlaceByKto(
             @PathVariable String key,
@@ -99,7 +94,6 @@ public class CongestionController {
         ));
     }
 
-    // ===== 내부 DTO/유틸 =====
     @Data
     public static class UpdateReq {
         private int persons;
