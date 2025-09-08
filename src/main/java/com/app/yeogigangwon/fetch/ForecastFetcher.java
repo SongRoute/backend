@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,9 +57,11 @@ public class ForecastFetcher {
             log.debug("API 키 (처음 30자): {}", apiKey.substring(0, Math.min(30, apiKey.length())));
             log.debug("전체 API URL: {}", url);
             
-            // API 호출
+            // API 호출 (URI 객체 사용으로 이중 인코딩 방지)
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            URI uri = URI.create(url);
+            log.debug("생성된 URI: {}", uri.toString());
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             
             // HTTP 상태 코드 확인
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -123,8 +126,10 @@ public class ForecastFetcher {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            // API 호출
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            // API 호출 (URI 객체 사용으로 이중 인코딩 방지)
+            URI uri = URI.create(url);
+            log.debug("생성된 URI: {}", uri.toString());
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             String responseBody = response.getBody();
             
             log.debug("API 응답 상태: {}, Content-Type: {}", 
