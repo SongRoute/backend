@@ -1,10 +1,8 @@
-// backend/src/main/java/com/app/yeogigangwon/controller/CongestionController.java
 package com.app.yeogigangwon.controller;
 
 import com.app.yeogigangwon.dto.CongestionDto;
 import com.app.yeogigangwon.service.CongestionService;
 
-// ⬇️ 새로 추가되는 서비스들
 import com.app.yeogigangwon.service.RealTimeCongestionService;
 import com.app.yeogigangwon.service.AreaMapService;
 import com.app.yeogigangwon.service.KtoService;
@@ -13,33 +11,29 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*; // ✅ PostMapping, GetMapping, PathVariable, RequestBody, RequestParam
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map; // ✅ Map
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/congestion")
 @RequiredArgsConstructor
 public class CongestionController {
 
-    // ✅ 기존 서비스(기존 기능 유지)
     private final CongestionService congestionService;
 
-    // ✅ 새 기능을 위한 서비스들(추가 주입)
     private final RealTimeCongestionService realTimeCongestionService;
     private final AreaMapService areaMapService;
     private final KtoService ktoService;
 
-    // ===== 기존 기능 (절대 수정하지 않음) =====
     @GetMapping("/status")
     public ResponseEntity<List<CongestionDto.CrowdStatus>> getCrowdStatus() {
         List<CongestionDto.CrowdStatus> statuses = congestionService.getCrowdStatus();
         return ResponseEntity.ok(statuses);
     }
 
-    // ===== [추가1] YOLO → 해수욕장 실시간 혼잡도 업데이트 =====
     @PostMapping("/beach/{beachId}")
     public ResponseEntity<Map<String, Object>> updateFromYolo(
             @PathVariable String beachId,
@@ -65,7 +59,6 @@ public class CongestionController {
         ));
     }
 
-    // ===== [추가2] 해수욕장 실시간 상태 조회(프론트 폴링용) =====
     @GetMapping("/beach/{beachId}")
     public ResponseEntity<Map<String, Object>> getBeach(@PathVariable String beachId) {
         RealTimeCongestionService.State st = realTimeCongestionService.get(beachId);
@@ -80,7 +73,6 @@ public class CongestionController {
         ));
     }
 
-    // ===== [추가3] 비-CCTV(해변/관광지) – KTO 예측 기반 =====
     @GetMapping("/place/{key}")
     public ResponseEntity<Map<String, Object>> getPlaceByKto(
             @PathVariable String key,
@@ -99,7 +91,6 @@ public class CongestionController {
         ));
     }
 
-    // ===== 내부 DTO/유틸 =====
     @Data
     public static class UpdateReq {
         private int persons;

@@ -1,4 +1,3 @@
-// backend/src/main/java/com/app/yeogigangwon/service/CongestionService.java
 package com.app.yeogigangwon.service;
 
 import com.app.yeogigangwon.domain.CongestionDomain;
@@ -18,7 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.ZoneId; // ★ 추가
+import java.time.ZoneId;
 import java.util.*;
 import java.util.Base64;
 
@@ -36,11 +35,9 @@ public class CongestionService {
 
     private List<CongestionDto.CctvInfo> cctvList;
 
-    // ===== 내부 임계/스코어 계산용 상수 =====
-    private static final int FALLBACK_DEN = 20;   // 데이터 부족 시 스코어 분모 기본값
-    private static final int MIN_SAMPLES   = 12;  // 적응형 임계치 적용에 필요한 최소 표본수
+    private static final int FALLBACK_DEN = 20;
+    private static final int MIN_SAMPLES   = 12;
 
-    // ★ KST 고정
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     @PostConstruct
@@ -64,10 +61,9 @@ public class CongestionService {
         );
     }
 
-    // 5분마다 CCTV 이미지 분석 및 DB 저장 (저녁/새벽 시간 제외)
-    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") // ★ KST로 스케줄 실행
+    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
     public void analyzeAndSaveCongestionData() {
-        LocalDateTime now = LocalDateTime.now(KST); // ★ KST 기준 시간 사용
+        LocalDateTime now = LocalDateTime.now(KST);
         int currentHour = now.getHour();
 
         // 22:00 ~ 05:00 사이에는 분석하지 않음
@@ -119,7 +115,7 @@ public class CongestionService {
     }
 
     public List<CongestionDto.CrowdStatus> getCrowdStatus() {
-        LocalDateTime now = LocalDateTime.now(KST); // ★ KST 기준 시간 사용
+        LocalDateTime now = LocalDateTime.now(KST);
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
         List<CongestionDto.CrowdStatus> statuses = new ArrayList<>();
 
@@ -172,10 +168,6 @@ public class CongestionService {
 
         return statuses;
     }
-
-    // =========================
-    //       계산 유틸리티
-    // =========================
 
     // NaN/Infinity 방지 + 0~1 클리핑, 분모가 0/음수면 FALLBACK_DEN 사용
     private double safeRatio(double num, double den) {

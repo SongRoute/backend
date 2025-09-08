@@ -1,4 +1,3 @@
-// backend/src/main/java/com/app/yeogigangwon/domain/CongestionDomain.java
 package com.app.yeogigangwon.domain;
 
 import jakarta.persistence.*;
@@ -19,7 +18,7 @@ public class CongestionDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // MySQL은 Long 타입의 기본키를 주로 사용합니다.
+    private Long id;
 
     private String beachId;
     private String beachName;

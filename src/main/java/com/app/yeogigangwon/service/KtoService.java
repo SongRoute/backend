@@ -40,8 +40,10 @@ public class KtoService {
             for (CSVRecord rec : parser) {
                 try { // 레코드 하나가 잘못되어도 전체가 멈추지 않도록 try-catch로 감쌉니다.
                     String place = safe(rec, "place_name");
-                    String beachId = safe(rec, "beach_id");
-                    String key = (beachId != null && !beachId.isBlank()) ? beachId : place;
+                    // ✅ "beach_id"를 "place_id"로 변경하고 변수명도 수정
+                    String placeId = safe(rec, "place_id");
+                    // ✅ 새로운 변수명을 사용하여 key를 결정
+                    String key = (placeId != null && !placeId.isBlank()) ? placeId : place;
                     if (key == null || key.isBlank()) continue;
 
                     LocalDate date = LocalDate.parse(rec.get("date"));
