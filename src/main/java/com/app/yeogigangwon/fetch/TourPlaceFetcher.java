@@ -2,16 +2,23 @@ package com.app.yeogigangwon.fetch;
 
 import com.app.yeogigangwon.domain.TourPlace;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
 @Component
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class TourPlaceFetcher {
 
-    private final String apiKey = "eJ1ed98LDUYCqmitRvtH68fMMuuIRBe923y5bnQWCasOowle6P5E9FgAr3htXM1WRjtqnc36p1hkNp8nD%2BRqWA%3D%3D";
+    private final String apiKey;
+    private final RestTemplate restTemplate;
+
+    public TourPlaceFetcher(@Value("${tour.api.key}") String apiKey) {
+        this.apiKey = apiKey;
+        this.restTemplate = new RestTemplate();
+    }
 
     public List<TourPlace> fetchTourPlacesFromApi() {
         String url = "https://apis.data.go.kr/B551011/KorService1/areaBasedList1?"
@@ -21,9 +28,9 @@ public class TourPlaceFetcher {
                 + "&_type=json"
                 + "&numOfRows=5"
                 + "&pageNo=1"
-                + "&areaCode=32"; // 강원도
+                + "&areaCode=32"; // 강원도 -> 이거 51 아닌가?
 
-        RestTemplate restTemplate = new RestTemplate();
+//        RestTemplate restTemplate = new RestTemplate();
 
         try {
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
