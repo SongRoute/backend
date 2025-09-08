@@ -51,6 +51,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=appuser
       - SPRING_DATASOURCE_PASSWORD=sdsqkqh
       - TZ=Asia/Seoul
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    extra_hosts:
+      - "apis-navi.kakao.com:203.248.252.2"
 
 volumes:
   mysql_data:

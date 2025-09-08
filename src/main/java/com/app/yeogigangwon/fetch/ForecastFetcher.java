@@ -32,6 +32,73 @@ public class ForecastFetcher {
     private static final String BASE_URL = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
 
     /**
+     * 기상청 단기예보 API 호출
+     * 
+     * @param nx 격자 X 좌표
+     * @param ny 격자 Y 좌표
+     * @return 날씨 정보 (API 실패 시 예외 발생)
+     * @throws RuntimeException API 호출 실패 시
+     */
+    public WeatherInfo fetchWeatherForecast(int nx, int ny) {
+        log.info("기상청 단기예보 API 호출 시작 - 격자: ({}, {})", nx, ny);
+        
+        try {
+            // 현재 시간 기준으로 가장 가까운 예보 시각 계산
+            LocalDateTime now = LocalDateTime.now();
+            String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String baseTime = getNearestBaseTime(now.getHour());
+            
+            log.debug("예보 기준 시각: {} {}", baseDate, baseTime);
+            
+            // API URL 구성
+            String url = buildApiUrl(nx, ny, baseDate, baseTime);
+            log.debug("기상청 API URL (API 키 제외): {}", url.replace(apiKey, "***"));
+            log.debug("API 키 (처음 30자): {}", apiKey.substring(0, Math.min(30, apiKey.length())));
+            log.debug("전체 API URL: {}", url);
+            
+            // API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            
+            // HTTP 상태 코드 확인
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("기상청 API 호출 성공 - 상태코드: {}", response.getStatusCode());
+                String responseBody = response.getBody();
+                log.debug("API 응답: {}", responseBody);
+                
+                // XML 응답 검증 (기상청 에러 응답 감지)
+                if (responseBody != null && responseBody.contains("SERVICE_KEY_IS_NOT_REGISTERED_ERROR")) {
+                    log.error("기상청 API 키가 서비스에 등록되지 않았습니다: {}", responseBody);
+                    throw new IllegalStateException("기상청 API 키가 서비스에 등록되지 않았습니다. 공공데이터포털에서 API 키 등록을 확인해주세요.");
+                }
+                
+                // HTML/XML 응답 감지 (에러 페이지 등)
+                if (responseBody != null && (responseBody.trim().startsWith("<") || responseBody.contains("<html") || responseBody.contains("<!DOCTYPE"))) {
+                    log.error("기상청이 HTML/XML 오류 응답을 반환했습니다: {}", responseBody.substring(0, Math.min(200, responseBody.length())));
+                    throw new IllegalStateException("기상청이 오류 응답을 반환했습니다. API 키나 서비스 등록 상태를 확인해주세요.");
+                }
+                
+                // JSON 응답 검증
+                if (responseBody == null || !responseBody.trim().startsWith("{")) {
+                    log.error("기상청 응답이 JSON이 아닙니다: {}", responseBody != null ? responseBody.substring(0, Math.min(200, responseBody.length())) : "null");
+                    throw new IllegalStateException("기상청이 JSON이 아닌 응답을 반환했습니다.");
+                }
+                
+                // 응답 파싱
+                return parseWeatherResponse(responseBody);
+            } else {
+                log.error("기상청 API 호출 실패 - 상태코드: {}, 응답: {}", 
+                         response.getStatusCode(), response.getBody());
+                throw new RuntimeException("기상청 API 호출 실패: " + response.getStatusCode());
+            }
+            
+        } catch (Exception e) {
+            log.error("기상청 단기예보 조회 실패", e);
+            throw new RuntimeException("기상청 단기예보 조회 실패: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
      * 단기 예보 정보 조회
      * 
      * @param lat 위도
@@ -63,11 +130,25 @@ public class ForecastFetcher {
             log.debug("API 응답 상태: {}, Content-Type: {}", 
                     response.getStatusCode(), 
                     response.getHeaders().getContentType());
+            log.debug("API 응답 본문 (처음 500자): {}", 
+                    responseBody != null ? responseBody.substring(0, Math.min(500, responseBody.length())) : "null");
 
             // JSON 응답 검증
-            if (responseBody == null || !responseBody.trim().startsWith("{")) {
-                log.error("기상청 응답이 JSON이 아닙니다: {}", responseBody);
-                throw new IllegalStateException("기상청이 JSON이 아닌 오류 응답을 반환했습니다.");
+            if (responseBody == null || responseBody.trim().isEmpty()) {
+                log.error("기상청 응답이 비어있습니다");
+                throw new IllegalStateException("기상청이 빈 응답을 반환했습니다.");
+            }
+            
+            // HTML 응답 감지 (에러 페이지 등)
+            if (responseBody.trim().startsWith("<") || responseBody.contains("<html") || responseBody.contains("<!DOCTYPE")) {
+                log.error("기상청이 HTML 오류 페이지를 반환했습니다: {}", responseBody.substring(0, Math.min(200, responseBody.length())));
+                throw new IllegalStateException("기상청이 HTML 오류 페이지를 반환했습니다. API 키나 파라미터를 확인해주세요.");
+            }
+            
+            // JSON 응답 검증
+            if (!responseBody.trim().startsWith("{")) {
+                log.error("기상청 응답이 JSON이 아닙니다: {}", responseBody.substring(0, Math.min(200, responseBody.length())));
+                throw new IllegalStateException("기상청이 JSON이 아닌 응답을 반환했습니다.");
             }
 
             // JSON 파싱 및 데이터 추출
@@ -89,7 +170,7 @@ public class ForecastFetcher {
         return BASE_URL
                 + "?serviceKey=" + apiKey
                 + "&pageNo=1"
-                + "&numOfRows=200"          // 충분한 데이터 요청
+                + "&numOfRows=200"
                 + "&dataType=JSON"
                 + "&base_date=" + baseDate
                 + "&base_time=" + baseTime
@@ -157,8 +238,8 @@ public class ForecastFetcher {
      * API 호출 실패 시 반환되는 기본 데이터
      */
     private WeatherInfo getDummyWeatherInfo() {
-        // 강릉 지역 기준으로 적절한 날씨 데이터
-        return new WeatherInfo(25, 20, 1, 3); // 기온 25°C, 강수확률 20%, 맑음, 풍속 3m/s
+        // API 실패 시 기본 더미 데이터 반환
+        return new WeatherInfo(20, 30, 1, 5); // 기온 20도, 강수확률 30%, 맑음, 풍속 5m/s
     }
 
     /**
