@@ -33,7 +33,6 @@ public class WeatherService {
 
     /**
      * 실시간 날씨 요약 정보 조회
-     * API에서 직접 데이터를 가져와서 제공
      * 
      * @param lat 위도
      * @param lon 경도
@@ -42,10 +41,18 @@ public class WeatherService {
     public WeatherSummary getWeatherSummary(double lat, double lon) {
         log.info("실시간 날씨 요약 조회 - 위도: {}, 경도: {}", lat, lon);
         
-        WeatherInfo info = forecastFetcher.fetchShortTermForecast(lat, lon);
-        List<WeatherAlert> alerts = alertFetcher.fetchWeatherAlert("강원도");
-        
-        return new WeatherSummary(info, alerts);
+        try {
+            WeatherInfo info = forecastFetcher.fetchWeatherForecast(
+                GridConverter.convertToGrid(lat, lon).nx,
+                GridConverter.convertToGrid(lat, lon).ny
+            );
+            List<WeatherAlert> alerts = alertFetcher.fetchWeatherAlerts("강원도");
+            
+            return new WeatherSummary(info, alerts);
+        } catch (Exception e) {
+            log.error("날씨 요약 조회 실패", e);
+            throw new RuntimeException("날씨 요약 조회 실패: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -58,34 +65,39 @@ public class WeatherService {
     public WeatherForecast fetchAndSave(double lat, double lon) {
         log.info("날씨 데이터 API 호출 및 저장 - 위도: {}, 경도: {}", lat, lon);
         
-        // 기준 시각 계산 (1시간 전 기준)
-        LocalDateTime now = LocalDateTime.now().minusHours(1);
-        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String baseTime = getNearestBaseTime(now.getHour());
+        try {
+            // 기준 시각 계산 (1시간 전 기준)
+            LocalDateTime now = LocalDateTime.now().minusHours(1);
+            String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String baseTime = getNearestBaseTime(now.getHour());
 
-        // 위도/경도를 격자 좌표로 변환
-        GridCoordinate grid = GridConverter.convertToGrid(lat, lon);
+            // 위도/경도를 격자 좌표로 변환
+            GridCoordinate grid = GridConverter.convertToGrid(lat, lon);
 
-        // API에서 단기 예보 데이터 조회
-        WeatherInfo info = forecastFetcher.fetchShortTermForecast(lat, lon);
+            // API에서 단기 예보 데이터 조회
+            WeatherInfo info = forecastFetcher.fetchWeatherForecast(grid.nx, grid.ny);
 
-        // WeatherForecast 도메인 객체 생성 및 저장
-        WeatherForecast weatherForecast = new WeatherForecast();
-        weatherForecast.setNx(String.valueOf(grid.nx));
-        weatherForecast.setNy(String.valueOf(grid.ny));
-        weatherForecast.setBaseDate(baseDate);
-        weatherForecast.setBaseTime(baseTime);
-        weatherForecast.setForecastTime(LocalDateTime.now());
-        
-        // WeatherInfo를 JSON으로 변환하여 저장
-        String weatherData = String.format(
-            "{\"temperature\":\"%s\",\"precipitationProbability\":\"%s\",\"sky\":\"%s\",\"windSpeed\":\"%s\"}",
-            info.getTemperature(), info.getPrecipitationProbability(), info.getSky(), info.getWindSpeed()
-        );
-        weatherForecast.setWeatherData(weatherData);
-        weatherForecast.setCreatedAt(LocalDateTime.now());
+            // WeatherForecast 도메인 객체 생성 및 저장
+            WeatherForecast weatherForecast = new WeatherForecast();
+            weatherForecast.setNx(String.valueOf(grid.nx));
+            weatherForecast.setNy(String.valueOf(grid.ny));
+            weatherForecast.setBaseDate(baseDate);
+            weatherForecast.setBaseTime(baseTime);
+            weatherForecast.setForecastTime(LocalDateTime.now());
+            
+            // WeatherInfo를 JSON으로 변환하여 저장
+            String weatherData = String.format(
+                "{\"temperature\":\"%s\",\"precipitationProbability\":\"%s\",\"sky\":\"%s\",\"windSpeed\":\"%s\"}",
+                info.getTemperature(), info.getPrecipitationProbability(), info.getSky(), info.getWindSpeed()
+            );
+            weatherForecast.setWeatherData(weatherData);
+            weatherForecast.setCreatedAt(LocalDateTime.now());
 
-        return weatherForecastRepository.save(weatherForecast);
+            return weatherForecastRepository.save(weatherForecast);
+        } catch (Exception e) {
+            log.error("날씨 데이터 API 호출 및 저장 실패", e);
+            throw new RuntimeException("날씨 데이터 API 호출 및 저장 실패: " + e.getMessage(), e);
+        }
     }
 
     /**
