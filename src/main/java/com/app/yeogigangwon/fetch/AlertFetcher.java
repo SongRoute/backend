@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -28,40 +29,69 @@ public class AlertFetcher {
     private static final String BASE_URL = "https://apis.data.go.kr/1360000/WthrWrnInfoService/getWthrWrnList";
 
     /**
-     * 기상 특보 정보 조회
+     * 기상 특보 조회
      * 
      * @param regionName 지역명 (예: "강원도")
-     * @return 기상 특보 목록 (API 실패 시 빈 목록 반환)
+     * @return 기상 특보 목록 (API 실패 시 예외 발생)
+     * @throws RuntimeException API 호출 실패 시
      */
-    public List<WeatherAlert> fetchWeatherAlert(String regionName) {
+    public List<WeatherAlert> fetchWeatherAlerts(String regionName) {
         log.info("기상 특보 조회 시작 - 지역: {}", regionName);
         
-        // API URL 구성
-        String url = buildApiUrl(regionName);
-        log.debug("기상청 특보 API URL: {}", url);
+        try {
+            // API URL 구성
+            String url = buildApiUrl(regionName);
+            log.debug("API URL: {}", url.replace(apiKey, "***"));
+            
+            // API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+            
+            // HTTP 상태 코드 확인
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("기상 특보 API 호출 성공 - 상태코드: {}", response.getStatusCode());
+                log.debug("API 응답: {}", response.getBody());
+                
+                // 응답 파싱
+                return parseWeatherAlertsResponse(response.getBody());
+            } else {
+                log.error("기상 특보 API 호출 실패 - 상태코드: {}, 응답: {}", 
+                         response.getStatusCode(), response.getBody());
+                throw new RuntimeException("기상 특보 API 호출 실패: " + response.getStatusCode());
+            }
+            
+        } catch (Exception e) {
+            log.error("기상 특보 조회 실패", e);
+            throw new RuntimeException("기상 특보 조회 실패: " + e.getMessage(), e);
+        }
+    }
 
-        RestTemplate restTemplate = new RestTemplate();
+    /**
+     * API 응답을 파싱하여 기상 특보 목록으로 변환
+     * 
+     * @param response API 응답
+     * @return 기상 특보 목록
+     */
+    private List<WeatherAlert> parseWeatherAlertsResponse(Map<String, Object> response) {
         List<WeatherAlert> result = new ArrayList<>();
 
         try {
-            // API 호출 및 응답 파싱
-            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
             if (response == null) {
                 log.warn("API 응답이 null입니다");
-                return getDummyAlerts();
+                return result; // 빈 목록 반환 (특보 없음)
             }
 
             // 응답 구조 파싱
             Map<String, Object> body = (Map<String, Object>) response.get("response");
             if (body == null) {
                 log.warn("response.body가 없습니다");
-                return getDummyAlerts();
+                return result; // 빈 목록 반환 (특보 없음)
             }
 
             Map<String, Object> items = (Map<String, Object>) body.get("items");
             if (items == null) {
                 log.warn("response.body.items가 없습니다");
-                return getDummyAlerts();
+                return result; // 빈 목록 반환 (특보 없음)
             }
 
             // item 데이터 추출
@@ -81,11 +111,8 @@ public class AlertFetcher {
             log.info("기상 특보 {}건 조회 완료", result.size());
 
         } catch (Exception e) {
-            log.error("기상 특보 API 호출 실패", e);
-            
-            // API 실패 시 더미 데이터 반환 (테스트용)
-            log.warn("API 호출 실패로 인해 더미 데이터를 반환합니다");
-            return getDummyAlerts();
+            log.error("기상 특보 응답 파싱 실패", e);
+            throw new RuntimeException("기상 특보 응답 파싱 실패: " + e.getMessage(), e);
         }
         
         return result;
@@ -117,15 +144,9 @@ public class AlertFetcher {
         
         return itemList;
     }
-    
-    /**
-     * 테스트용 더미 기상특보 데이터
-     * API 호출 실패 시 반환되는 기본 데이터
-     */
+
     private List<WeatherAlert> getDummyAlerts() {
-        log.debug("더미 기상특보 데이터 반환");
-        // 현재 기상특보 없음으로 설정 (빈 목록)
-        return new ArrayList<>();
+        throw new UnsupportedOperationException("더미 데이터는 지원하지 않습니다. 실제 API 응답을 사용하세요.");
     }
 
     /**

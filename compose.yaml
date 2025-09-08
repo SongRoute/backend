@@ -31,6 +31,11 @@ services:
       - python-api
     environment:
       - TZ=Asia/Seoul
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    extra_hosts:
+      - "apis-navi.kakao.com:203.248.252.2"
 
 volumes:
   mysql_data:
