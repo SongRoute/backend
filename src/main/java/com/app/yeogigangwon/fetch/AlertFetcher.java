@@ -1,6 +1,7 @@
 package com.app.yeogigangwon.fetch;
 
 import com.app.yeogigangwon.dto.WeatherAlert;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +33,7 @@ public class AlertFetcher {
      * 기상 특보 조회
      * 
      * @param regionName 지역명 (예: "강원도")
-     * @return 기상 특보 목록 (API 실패 시 예외 발생)
-     * @throws RuntimeException API 호출 실패 시
+     * @return 기상 특보 목록 (API 실패 시 빈 목록 반환)
      */
     public List<WeatherAlert> fetchWeatherAlerts(String regionName) {
         log.info("기상 특보 조회 시작 - 지역: {}", regionName);
@@ -43,43 +43,48 @@ public class AlertFetcher {
             String url = buildApiUrl(regionName);
             log.debug("API URL: {}", url.replace(apiKey, "***"));
             
-            // API 호출
+            // API 호출 (JSON 문자열로 받기)
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             
             // HTTP 상태 코드 확인
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("기상 특보 API 호출 성공 - 상태코드: {}", response.getStatusCode());
-                log.debug("API 응답: {}", response.getBody());
+                String responseBody = response.getBody();
+                log.debug("API 응답: {}", responseBody);
                 
                 // 응답 파싱
-                return parseWeatherAlertsResponse(response.getBody());
+                return parseWeatherAlertsResponse(responseBody);
             } else {
                 log.error("기상 특보 API 호출 실패 - 상태코드: {}, 응답: {}", 
                          response.getStatusCode(), response.getBody());
-                throw new RuntimeException("기상 특보 API 호출 실패: " + response.getStatusCode());
+                return new ArrayList<>(); // 빈 목록 반환
             }
             
         } catch (Exception e) {
             log.error("기상 특보 조회 실패", e);
-            throw new RuntimeException("기상 특보 조회 실패: " + e.getMessage(), e);
+            return new ArrayList<>(); // 빈 목록 반환 (예외 발생 시)
         }
     }
 
     /**
      * API 응답을 파싱하여 기상 특보 목록으로 변환
      * 
-     * @param response API 응답
+     * @param responseBody API 응답 JSON 문자열
      * @return 기상 특보 목록
      */
-    private List<WeatherAlert> parseWeatherAlertsResponse(Map<String, Object> response) {
+    private List<WeatherAlert> parseWeatherAlertsResponse(String responseBody) {
         List<WeatherAlert> result = new ArrayList<>();
 
         try {
-            if (response == null) {
-                log.warn("API 응답이 null입니다");
+            if (responseBody == null || responseBody.trim().isEmpty()) {
+                log.warn("API 응답이 비어있습니다");
                 return result; // 빈 목록 반환 (특보 없음)
             }
+
+            // JSON 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> response = objectMapper.readValue(responseBody, Map.class);
 
             // 응답 구조 파싱
             Map<String, Object> body = (Map<String, Object>) response.get("response");
@@ -112,7 +117,7 @@ public class AlertFetcher {
 
         } catch (Exception e) {
             log.error("기상 특보 응답 파싱 실패", e);
-            throw new RuntimeException("기상 특보 응답 파싱 실패: " + e.getMessage(), e);
+            // 파싱 실패 시 빈 목록 반환
         }
         
         return result;

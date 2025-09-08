@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,14 @@ public class WeatherService {
                 GridConverter.convertToGrid(lat, lon).nx,
                 GridConverter.convertToGrid(lat, lon).ny
             );
-            List<WeatherAlert> alerts = alertFetcher.fetchWeatherAlerts("강원도");
+            
+            // 기상 특보 조회 (실패 시 빈 목록 반환)
+            List<WeatherAlert> alerts = new ArrayList<>();
+            try {
+                alerts = alertFetcher.fetchWeatherAlerts("강원도");
+            } catch (Exception e) {
+                log.warn("기상 특보 조회 실패, 빈 목록으로 처리: {}", e.getMessage());
+            }
             
             return new WeatherSummary(info, alerts);
         } catch (Exception e) {
