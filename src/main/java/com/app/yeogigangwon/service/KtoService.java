@@ -25,20 +25,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class KtoService {
+    // key: place_name 또는 beach_id
+    // value: (key별) 날짜(LocalDate) -> 방문객 예측치(0~100) 맵
     private final Map<String, Map<LocalDate, Double>> byPlace = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void load() throws Exception {
-        // ClassPathResource를 사용하여 리소스 폴더의 파일을 안전하게 읽어옵니다.
+        // ClassPathResource를 사용하여 리소스 폴더의 파일을 안전하게 읽어옴
         ClassPathResource resource = new ClassPathResource("data/kto_latest.csv");
         if (!resource.exists()) return;
 
-        // InputStreamReader를 통해 UTF-8 인코딩을 명시적으로 지정합니다.
+        // UTF-8 인코딩으로 CSV 파일을 파싱
         try (Reader r = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
              CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(r)) {
 
             for (CSVRecord rec : parser) {
-                try { // 레코드 하나가 잘못되어도 전체가 멈추지 않도록 try-catch로 감쌉니다.
+                try {
+                    // 1) 장소 정보 (beach_id가 있으면 우선 사용, 없으면 place_name 사용)
                     String place = safe(rec, "place_name");
                     // ✅ "beach_id"를 "place_id"로 변경하고 변수명도 수정
                     String placeId = safe(rec, "place_id");
@@ -46,19 +49,23 @@ public class KtoService {
                     String key = (placeId != null && !placeId.isBlank()) ? placeId : place;
                     if (key == null || key.isBlank()) continue;
 
+                    // 2) 날짜 (yyyy-MM-dd 형식)
                     LocalDate date = LocalDate.parse(rec.get("date"));
+                    // 3) 방문객 예측 지표 (0~100)
                     Double rate = parseD(safe(rec, "visitor_rate_pred"));
                     if (rate == null) continue;
 
+                    // 4) byPlace 맵에 누적 저장
                     byPlace.computeIfAbsent(key, k -> new ConcurrentHashMap<>()).put(date, rate);
                 } catch (Exception e) {
-                    // 특정 행 파싱에 실패하면 로그를 남기고 계속 진행합니다.
+                    // 특정 행 파싱 실패 시 로그 출력 후 계속 진행
                     System.err.println("Failed to parse CSV record: " + rec.toString() + " | Error: " + e.getMessage());
                 }
             }
         }
     }
 
+    // 특정 장소(key: beachId 또는 place_name)와 날짜(LocalDate)에 해당하는 방문객 예측치를 반환
     public Optional<Double> getRate(String key, LocalDate date) {
         Map<LocalDate, Double> m = byPlace.get(key);
         return (m == null) ? Optional.empty() : Optional.ofNullable(m.get(date));
