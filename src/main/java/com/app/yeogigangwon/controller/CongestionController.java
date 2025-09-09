@@ -1,15 +1,22 @@
+/**
+ * 혼잡도 API 엔드포인트를 제공하는 REST 컨트롤러임. 서비스 계층을 호출하여 조회/갱신/상태 확인 등을 처리함.
+ * 코드 로직은 변경하지 않고, 이해를 돕기 위한 간략 주석만 추가했음.
+ * 서비스 흐름: Controller -> Service -> Repository/외부 API -> Domain/DTO 순으로 이해하면 편함.
+ */
 package com.app.yeogigangwon.controller;
 
 import com.app.yeogigangwon.dto.CongestionDto;
 import com.app.yeogigangwon.service.CongestionService;
-
 import com.app.yeogigangwon.service.RealTimeCongestionService;
 import com.app.yeogigangwon.service.AreaMapService;
 import com.app.yeogigangwon.service.KtoService;
+import com.app.yeogigangwon.service.KtoDataUpdateService;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +30,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CongestionController {
 
-    private final CongestionService congestionService; // 종합 혼잡도
+    private final CongestionService congestionService;                 // 종합 혼잡도
     private final RealTimeCongestionService realTimeCongestionService; // 실시간 혼잡도(yolo)
-    private final AreaMapService areaMapService; // 해수욕장 면적
-    private final KtoService ktoService; // 한국관광공사(KTO) 데이터 서비스
+    private final AreaMapService areaMapService;                       // 해수욕장 면적
+    private final KtoService ktoService;                               // 한국관광공사(KTO) 데이터 서비스
+    private final KtoDataUpdateService ktoDataUpdateService;           // KTO 데이터 수동/디버그
 
-    // cctv 제공 해수욕장 현재 혼잡도 상태 조회하는 API
+    // cctv 제공 해수욕장 현재 혼잡도 상태 조회
     @GetMapping("/status")
     public ResponseEntity<List<CongestionDto.CrowdStatus>> getCrowdStatus() {
         List<CongestionDto.CrowdStatus> statuses = congestionService.getCrowdStatus();
         return ResponseEntity.ok(statuses);
     }
 
-    // yolo로부터 받은 실시간 인원수로 특정 해변의 혼잡도를 갱신하고 조회
+    // yolo 실시간 혼잡도 갱신
     @PostMapping("/beach/{beachId}")
     public ResponseEntity<Map<String, Object>> updateFromYolo(
             @PathVariable String beachId,
@@ -51,13 +59,13 @@ public class CongestionController {
         double density = req.getPersons() / effArea;
 
         return ResponseEntity.ok(Map.of(
-                "beach_id", beachId, // 해변 ID
-                "level", st.level, // 혼잡도 단계 (여유, 보통, 혼잡)
+                "beach_id", beachId,
+                "level", st.level,
                 "persons", req.getPersons(),
                 "density_per_m2", round(density, 4),
                 "density_per_100m2", round(density * 100, 2),
-                "ema_density_per_m2", round(st.emaDensity, 4), // 전체 면적
-                "method", "yolo_area" // 사용된 분석 방법 -> 없어도 될거같음
+                "ema_density_per_m2", round(st.emaDensity, 4),
+                "method", "yolo_area"
         ));
     }
 
@@ -75,7 +83,7 @@ public class CongestionController {
         ));
     }
 
-    // 한국관광공사(KTO) 기반 특정 관광지의 예측 혼잡도 조회하는 API
+    // KTO 기반 특정 관광지 예측 혼잡도 조회 (기존)
     @GetMapping("/place/{key}")
     public ResponseEntity<Map<String, Object>> getPlaceByKto(
             @PathVariable String key,
@@ -92,6 +100,54 @@ public class CongestionController {
                 "level", level,
                 "method", "kto"
         ));
+    }
+
+    // ===== KTO 관련 추가/디버그 엔드포인트 =====
+
+    // 관광지명으로 바로 예측 혼잡도 조회
+    @GetMapping("/place-by-name")
+    public ResponseEntity<Map<String, Object>> getPlaceRateByName(
+            @RequestParam("name") String name,
+            @RequestParam(required = false) String date
+    ) {
+        LocalDate d = (date == null) ? LocalDate.now() : LocalDate.parse(date);
+        double rate = ktoService.getRateByPlaceName(name, d).orElse(Double.NaN);
+        String level = ktoToLevel(rate);
+
+        return ResponseEntity.ok(Map.of(
+                "place_name", name,
+                "date", d.toString(),
+                "kto_rate", Double.isNaN(rate) ? null : rate,
+                "level", level,
+                "method", "kto"
+        ));
+    }
+
+    // 전체 갱신(저장) 수동 트리거
+    @GetMapping("/update-kto")
+    public ResponseEntity<String> forceUpdateKtoData() {
+        ktoDataUpdateService.updateKtoCongestionData();
+        return ResponseEntity.ok("KTO 데이터 업데이트를 수동 실행했습니다.");
+    }
+
+    // 단일 호출 (JSON 요약)
+    @GetMapping("/update-kto/once")
+    public ResponseEntity<Map<String, Object>> updateKtoOnce(
+            @RequestParam("signgu") String signgu,
+            @RequestParam(value = "tAtsNm", required = false) String tAtsNm
+    ) {
+        Map<String, Object> summary = ktoDataUpdateService.updateOnceForDebug(signgu, tAtsNm);
+        return ResponseEntity.ok(summary);
+    }
+
+    // 단일 호출 원문
+    @GetMapping("/update-kto/once/raw")
+    public ResponseEntity<String> updateKtoOnceRaw(
+            @RequestParam("signgu") String signgu,
+            @RequestParam(value = "tAtsNm", required = false) String tAtsNm
+    ) {
+        String raw = ktoDataUpdateService.getRawOnce(signgu, tAtsNm);
+        return ResponseEntity.ok(raw);
     }
 
     @Data
