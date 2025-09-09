@@ -28,7 +28,7 @@ public class TourPlaceFetcher {
                 + "&_type=json"
                 + "&numOfRows=5"
                 + "&pageNo=1"
-                + "&areaCode=32"; // 강원도 -> 이거 51 아닌가?
+                + "&areaCode=51"; // 강원도 51로 수정
 
 //        RestTemplate restTemplate = new RestTemplate();
 
