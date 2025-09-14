@@ -66,14 +66,14 @@ public class CongestionService {
         );
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */30 * * * *", zone = "Asia/Seoul")
     public void analyzeAndSaveCongestionData() {
-        // 10분마다 모든 CCTV에 대해 혼잡도 분석을 실행
+        // 30분마다 모든 CCTV에 대해 혼잡도 분석을 실행
         LocalDateTime now = LocalDateTime.now(KST);
         int currentHour = now.getHour();
 
-        // 22:00 ~ 05:00 (심야 시간) 사이에는 분석하지 않음
-        if (currentHour >= 22 || currentHour < 5) {
+        // 22:00 ~ 06:00 (심야 시간) 사이에는 분석하지 않음
+        if (currentHour >= 22 || currentHour < 6) {
             log.info("Crowd analysis skipped during night hours.");
             return;
         }
