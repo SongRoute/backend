@@ -57,20 +57,40 @@ public class TourPlaceFetcher {
 
     public List<TourPlace> fetchTourPlacesFromApi() {
         try {
-            String responseBody = callTourApiAsString(100, 1, 32);
+            int pageNo = 1;
+            int numOfRows = 1000; // ✅ 최대치
+            List<TourPlace> allPlaces = new ArrayList<>();
 
-            if (responseBody == null || responseBody.isBlank()) {
-                log.error("[TourAPI] 응답이 비어있습니다.");
-                return List.of();
+            while (true) {
+                String responseBody = callTourApiAsString(numOfRows, pageNo, 32);
+
+                if (responseBody == null || responseBody.isBlank()) {
+                    log.error("[TourAPI] 응답이 비어있습니다.");
+                    break;
+                }
+
+                List<TourPlace> places;
+                if (isJson(responseBody)) {
+                    places = parseFromJson(responseBody);
+                } else {
+                    places = parseFromXml(responseBody);
+                }
+
+                if (places.isEmpty()) break; // 데이터 없으면 종료
+                allPlaces.addAll(places);
+
+                log.info("[TourAPI] {} 페이지 수집 완료, 누적 {}건", pageNo, allPlaces.size());
+
+                // totalCount 확인해서 마지막 페이지인지 체크
+                Map<String, Object> parsed = objectMapper.readValue(responseBody, Map.class);
+                Map<String, Object> body = (Map<String, Object>) ((Map<String, Object>) parsed.get("response")).get("body");
+                int totalCount = Integer.parseInt(body.get("totalCount").toString());
+                if (pageNo * numOfRows >= totalCount) break;
+
+                pageNo++;
             }
 
-            // ✅ JSON/XML 구분
-            if (isJson(responseBody)) {
-                return parseFromJson(responseBody);
-            } else {
-                return parseFromXml(responseBody);
-            }
-
+            return allPlaces;
         } catch (Exception e) {
             log.error("TourAPI 호출 또는 데이터 파싱 중 예외가 발생했습니다.", e);
             return List.of();
