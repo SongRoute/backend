@@ -22,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AlertFetcher {
 
+    private final RestTemplate restTemplate;
+    
     // 기상청 공공데이터 포털 API 키
     @Value("${weather.api.key}")
     private String apiKey;
@@ -44,7 +46,6 @@ public class AlertFetcher {
             log.debug("API URL: {}", url.replace(apiKey, "***"));
             
             // API 호출 (JSON 문자열로 받기)
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             
             // HTTP 상태 코드 확인
