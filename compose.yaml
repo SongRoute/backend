@@ -2,7 +2,12 @@ services:
   mysql:
     image: 'mysql:8.0'
     container_name: backend-mysql # 컨테이너 이름 지정
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
     environment:
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
       - 'MYSQL_DATABASE=yeogigangwon'
       - 'MYSQL_ROOT_PASSWORD=sdsqkqh55'
       - 'MYSQL_USER=appuser'

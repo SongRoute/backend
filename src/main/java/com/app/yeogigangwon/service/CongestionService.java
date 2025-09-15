@@ -66,14 +66,14 @@ public class CongestionService {
         );
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */15 * * * *", zone = "Asia/Seoul")
     public void analyzeAndSaveCongestionData() {
-        // 10분마다 모든 CCTV에 대해 혼잡도 분석을 실행
+        // 15분마다 모든 CCTV에 대해 혼잡도 분석을 실행
         LocalDateTime now = LocalDateTime.now(KST);
         int currentHour = now.getHour();
 
-        // 22:00 ~ 05:00 (심야 시간) 사이에는 분석하지 않음
-        if (currentHour >= 22 || currentHour < 5) {
+        // 22:00 ~ 06:00 (심야 시간) 사이에는 분석하지 않음
+        if (currentHour >= 22 || currentHour < 6) {
             log.info("Crowd analysis skipped during night hours.");
             return;
         }
@@ -137,7 +137,7 @@ public class CongestionService {
 
             // 데이터 끊김 체크
             if (recentRecords.isEmpty()
-                    || recentRecords.get(0).getTimestamp().isBefore(now.minusMinutes(15))) {
+                    || recentRecords.get(0).getTimestamp().isBefore(now.minusMinutes(30))) {
                 statuses.add(new CongestionDto.CrowdStatus(
                         cctv.getId(), cctv.getBeachName(), "정보없음", 0, null
                 ));
@@ -254,8 +254,14 @@ public class CongestionService {
      */
     private String determineStatus(int latestCount, List<Integer> recentCounts) {
         Thresholds th = deriveThresholds(recentCounts);
-        if (latestCount >= th.tBusy()) return "혼잡";
-        if (latestCount >= th.tRelax()) return "보통";
-        return "여유";
+
+        // 실제 임계치 값을 사용하여 등급을 판정
+        if (latestCount >= th.tBusy()) {
+            return "혼잡";
+        } else if (latestCount >= th.tRelax()) {
+            return "보통";
+        } else {
+            return "여유";
+        }
     }
 }
