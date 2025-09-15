@@ -60,10 +60,27 @@ public class TourPlaceService {
                 .map(place -> {
                     // 관광지의 위도/경도 직접 사용
                     if (place.getLatitude() != null && place.getLongitude() != null) {
-                        double distance = DistanceCalculator.calculateDistance(
-                                userLat, userLon, place.getLatitude(), place.getLongitude()
+
+                        // 이동시간 정보 조회 (거리 계산 포함)
+                        TravelTimeInfo travelTime = kakaoMapApiClient.getTravelTime(
+                            userLat, userLon, place.getLatitude(), place.getLongitude()
+
                         );
-                        return new TourPlaceDistance(place, distance);
+                        
+                        // 이동시간 정보가 있으면 사용, 없으면 거리 기반 추정
+                        int drivingTime = travelTime != null ? travelTime.getDrivingTime() : 0;
+                        int walkingTime = travelTime != null ? travelTime.getWalkingTime() : 0;
+                        double distance = travelTime != null ? travelTime.getDrivingDistance() : 0.0;
+                        
+                        // TourPlaceDistance 객체 생성 (이동시간 정보 포함)
+                        TourPlaceDistance tpd = new TourPlaceDistance();
+                        tpd.setPlace(place);
+                        tpd.setDistance(distance);
+                        tpd.setDrivingTime(drivingTime);
+                        tpd.setWalkingTime(walkingTime);
+                        tpd.setTransportationMode("car"); // 기본값
+                        
+                        return tpd;
                     }
                     return null;
                 })
@@ -136,9 +153,12 @@ public class TourPlaceService {
         }
 
         // 카카오맵 API로 이동 시간 조회
+        log.info("TourPlaceService에서 kakaoMapApiClient.getTravelTime 호출 시작");
         TravelTimeInfo travelTime = kakaoMapApiClient.getTravelTime(
                 place1.getLatitude(), place1.getLongitude(), place2.getLatitude(), place2.getLongitude()
         );
+
+        log.info("TourPlaceService에서 kakaoMapApiClient.getTravelTime 호출 완료");
 
         // 출발지와 도착지 이름 설정
         travelTime.setOriginName(place1.getName());

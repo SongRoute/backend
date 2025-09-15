@@ -113,7 +113,7 @@ public class ForecastFetcher {
         
         // 위도/경도를 격자 좌표로 변환
         GridCoordinate grid = GridConverter.convertToGrid(lat, lon);
-        
+
         // 기준 시각 계산 (1시간 전 기준)
         LocalDateTime now = LocalDateTime.now().minusHours(1);
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -201,28 +201,28 @@ public class ForecastFetcher {
             throw new IllegalStateException("response.body.items가 없습니다");
         }
 
-        Object itemNode = items.get("item");
+            Object itemNode = items.get("item");
         if (itemNode == null) {
             throw new IllegalStateException("response.body.items.item이 없습니다");
         }
 
         // item이 단일 객체인지 리스트인지 확인
-        List<Map<String, Object>> itemList;
-        if (itemNode instanceof List) {
-            itemList = (List<Map<String, Object>>) itemNode;
-        } else {
-            itemList = new ArrayList<>();
-            itemList.add((Map<String, Object>) itemNode);
-        }
+            List<Map<String, Object>> itemList;
+            if (itemNode instanceof List) {
+                itemList = (List<Map<String, Object>>) itemNode;
+            } else {
+                itemList = new ArrayList<>();
+                itemList.add((Map<String, Object>) itemNode);
+            }
 
         // 필요한 날씨 데이터 추출
-        Integer tmp = null, pop = null, sky = null, wsd = null;
+            Integer tmp = null, pop = null, sky = null, wsd = null;
 
-        for (Map<String, Object> item : itemList) {
-            String category = String.valueOf(item.get("category"));
-            String value = String.valueOf(item.get("fcstValue"));
+            for (Map<String, Object> item : itemList) {
+                String category = String.valueOf(item.get("category"));
+                String value = String.valueOf(item.get("fcstValue"));
 
-            switch (category) {
+                switch (category) {
                 case "TMP" -> tmp = Integer.parseInt(value);           // 기온
                 case "POP" -> pop = Integer.parseInt(value);           // 강수확률
                 case "SKY" -> sky = Integer.parseInt(value);           // 하늘상태
@@ -231,11 +231,11 @@ public class ForecastFetcher {
         }
 
         // 필수 데이터 검증
-        if (tmp == null || pop == null || sky == null || wsd == null) {
+            if (tmp == null || pop == null || sky == null || wsd == null) {
             throw new IllegalStateException("필수 날씨 데이터(TMP/POP/SKY/WSD)가 누락되었습니다");
-        }
+            }
 
-        return new WeatherInfo(tmp, pop, sky, wsd);
+            return new WeatherInfo(tmp, pop, sky, wsd);
     }
     
     /**

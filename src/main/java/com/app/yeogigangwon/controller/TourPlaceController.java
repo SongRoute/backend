@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -42,22 +43,38 @@ public class TourPlaceController {
     }
     
     /**
-     * 거리 기반으로 정렬된 관광지 추천
+     * 거리 기반으로 정렬된 관광지 추천 (교통수단 선택 가능)
      * 
      * @param lat 위도
      * @param lon 경도
      * @param limit 추천할 관광지 개수 (기본값: 10)
+     * @param transport 교통수단 ("car" 또는 "walk", 기본값: "car")
      * @return 거리 기반으로 정렬된 관광지 목록
      */
     @GetMapping("/places/recommended")
     public ResponseEntity<List<TourPlaceDistance>> getRecommendedPlaces(
             @RequestParam double lat,
             @RequestParam double lon,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "car") String transport
     ) {
-        log.info("거리 기반 관광지 추천 요청 - 위치: ({}, {}), 제한: {}", lat, lon, limit);
+        log.info("거리 기반 관광지 추천 요청 - 위치: ({}, {}), 제한: {}, 교통수단: {}", lat, lon, limit, transport);
         
         List<TourPlaceDistance> places = tourPlaceService.getRecommendedPlacesByDistance(lat, lon, limit);
+        
+        // 교통수단에 따라 정렬 기준 변경
+        if ("walk".equals(transport)) {
+            places = places.stream()
+                    .peek(tpd -> tpd.setTransportationMode("walk"))
+                    .sorted((a, b) -> Integer.compare(a.getWalkingTime(), b.getWalkingTime()))
+                    .collect(Collectors.toList());
+        } else {
+            places = places.stream()
+                    .peek(tpd -> tpd.setTransportationMode("car"))
+                    .sorted((a, b) -> Integer.compare(a.getDrivingTime(), b.getDrivingTime()))
+                    .collect(Collectors.toList());
+        }
+        
         return ResponseEntity.ok(places);
     }
     
