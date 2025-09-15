@@ -40,13 +40,41 @@ public class WeatherService {
      * @return 날씨 요약 정보
      */
     public WeatherSummary getWeatherSummary(double lat, double lon) {
-        log.info("실시간 날씨 요약 조회 - 위도: {}, 경도: {}", lat, lon);
+       log.info("날씨 요약 조회 - 위도: {}, 경도: {}", lat, lon);
         
         try {
+            // 1. 먼저 DB에서 최신 데이터 조회 (15분 이내)
+            WeatherInfo cachedInfo = getLatestFromDb(lat, lon);
+            
+            // 2. 캐시된 데이터가 있고 15분 이내라면 사용
+            if (cachedInfo != null) {
+                log.info("DB에서 최신 날씨 데이터 사용 (온도: {}도)", cachedInfo.getTemperature());
+                
+                // 기상 특보 조회 (실패 시 빈 목록 반환)
+                List<WeatherAlert> alerts = new ArrayList<>();
+                try {
+                    alerts = alertFetcher.fetchWeatherAlerts("강원도");
+                } catch (Exception e) {
+                    log.warn("기상 특보 조회 실패, 빈 목록으로 처리: {}", e.getMessage());
+                }
+                
+                return new WeatherSummary(cachedInfo, alerts);
+            }
+            
+            // 3. 캐시된 데이터가 없거나 오래되었다면 새로운 API 호출
+            log.info("DB에 최신 데이터가 없어 새로운 API 호출을 시도합니다");
             WeatherInfo info = forecastFetcher.fetchWeatherForecast(
                 GridConverter.convertToGrid(lat, lon).nx,
                 GridConverter.convertToGrid(lat, lon).ny
             );
+            
+            // 4. 새로운 데이터를 DB에 저장
+            try {
+                fetchAndSave(lat, lon);
+                log.info("새로운 날씨 데이터를 DB에 저장했습니다");
+            } catch (Exception e) {
+                log.warn("DB 저장 실패, 하지만 API 데이터는 사용: {}", e.getMessage());
+            }
             
             // 기상 특보 조회 (실패 시 빈 목록 반환)
             List<WeatherAlert> alerts = new ArrayList<>();
@@ -131,6 +159,19 @@ public class WeatherService {
 
         // WeatherForecast를 WeatherInfo로 변환 (JSON 파싱)
         WeatherForecast forecast = forecasts.get(0);
+        
+        // 15분 이내의 데이터인지 확인
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime forecastTime = forecast.getCreatedAt();
+        long minutesDiff = java.time.Duration.between(forecastTime, now).toMinutes();
+        
+        if (minutesDiff > 15) {
+            log.info("DB 데이터가 {}분 전 데이터로 너무 오래되어 사용하지 않습니다", minutesDiff);
+            return null;
+        }
+        
+        log.info("DB에서 {}분 전 데이터 사용 (온도: {}도)", minutesDiff, forecast.getWeatherData());
+        
         try {
             // 간단한 JSON 파싱 (실제로는 Jackson ObjectMapper 사용 권장)
             String weatherData = forecast.getWeatherData();

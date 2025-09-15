@@ -25,6 +25,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ForecastFetcher {
 
+    private final RestTemplate restTemplate;
+    
     // 기상청 공공데이터 포털 API 키
     @Value("${weather.api.key}")
     private String apiKey;
@@ -41,7 +43,8 @@ public class ForecastFetcher {
      * @throws RuntimeException API 호출 실패 시
      */
     public WeatherInfo fetchWeatherForecast(int nx, int ny) {
-        log.info("기상청 단기예보 API 호출 시작 - 격자: ({}, {})", nx, ny);
+        log.error("=== 강제 로그: fetchWeatherForecast 메서드 시작 ===");
+        log.error("=== 강제 로그: 기상청 단기예보 API 호출 시작 - 격자: ({}, {}) ===", nx, ny);
         
         try {
             // 현재 시간 기준으로 가장 가까운 예보 시각 계산
@@ -58,7 +61,6 @@ public class ForecastFetcher {
             log.debug("전체 API URL: {}", url);
             
             // API 호출 (URI 객체 사용으로 이중 인코딩 방지)
-            RestTemplate restTemplate = new RestTemplate();
             URI uri = URI.create(url);
             log.debug("생성된 URI: {}", uri.toString());
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
@@ -123,8 +125,6 @@ public class ForecastFetcher {
         String url = buildApiUrl(grid.nx, grid.ny, baseDate, baseTime);
         log.debug("기상청 API URL: {}", url);
 
-        RestTemplate restTemplate = new RestTemplate();
-
         try {
             // API 호출 (URI 객체 사용으로 이중 인코딩 방지)
             URI uri = URI.create(url);
@@ -161,10 +161,7 @@ public class ForecastFetcher {
 
         } catch (Exception e) {
             log.error("단기 예보 API 호출 실패", e);
-            
-            // API 실패 시 더미 데이터 반환 (테스트용)
-            log.warn("API 호출 실패로 인해 더미 데이터를 반환합니다");
-            return getDummyWeatherInfo();
+            throw new RuntimeException("기상청 API 호출 실패: " + e.getMessage(), e);
         }
     }
     
@@ -187,6 +184,7 @@ public class ForecastFetcher {
      * 기상청 API 응답을 파싱하여 WeatherInfo로 변환
      */
     private WeatherInfo parseWeatherResponse(String responseBody) throws Exception {
+        log.info("=== parseWeatherResponse 메서드 시작 ===");
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> root = objectMapper.readValue(responseBody, Map.class);
 
@@ -215,19 +213,110 @@ public class ForecastFetcher {
                 itemList.add((Map<String, Object>) itemNode);
             }
 
-        // 필요한 날씨 데이터 추출
-            Integer tmp = null, pop = null, sky = null, wsd = null;
+        // 현재 시간에 가장 가까운 미래 예보 찾기
+        LocalDateTime now = LocalDateTime.now();
+        log.info("현재 시간: {}", now);
 
+        // 시간대별로 데이터 그룹화
+        Map<String, Map<String, Object>> forecastByTime = new HashMap<>();
             for (Map<String, Object> item : itemList) {
-                String category = String.valueOf(item.get("category"));
-                String value = String.valueOf(item.get("fcstValue"));
-
-                switch (category) {
-                case "TMP" -> tmp = Integer.parseInt(value);           // 기온
-                case "POP" -> pop = Integer.parseInt(value);           // 강수확률
-                case "SKY" -> sky = Integer.parseInt(value);           // 하늘상태
-                case "WSD" -> wsd = (int) Float.parseFloat(value);    // 풍속 (소수점 처리)
+            String fcstDate = String.valueOf(item.get("fcstDate"));
+            String fcstTime = String.valueOf(item.get("fcstTime"));
+            String timeKey = fcstDate + fcstTime;
+            
+            if (!forecastByTime.containsKey(timeKey)) {
+                forecastByTime.put(timeKey, new HashMap<>());
             }
+            forecastByTime.get(timeKey).put(String.valueOf(item.get("category")), item.get("fcstValue"));
+        }
+        
+        // 현재 시간에 가장 가까운 예보 찾기 (간단한 방법)
+        final Map<String, Object>[] closestForecast = new Map[1];
+        int currentHour = now.getHour();
+        
+        log.error("=== 강제 로그: 현재 시간: {} ({}시) ===", now, currentHour);
+        log.error("=== 강제 로그: 예보 개수: {} ===", forecastByTime.size());
+        
+        // 현재 시간에 가장 가까운 예보 찾기
+        for (Map.Entry<String, Map<String, Object>> entry : forecastByTime.entrySet()) {
+            String timeKey = entry.getKey();
+            String fcstDate = timeKey.substring(0, 8);
+            String fcstTime = timeKey.substring(8, 12);
+            
+            log.error("=== 강제 로그: 처리 중인 예보 - 날짜: {}, 시간: {} ===", fcstDate, fcstTime);
+            
+            try {
+                // 현재 날짜와 같은 예보만 고려
+                String currentDateStr = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                if (fcstDate.equals(currentDateStr)) {
+                    int forecastHour = Integer.parseInt(fcstTime.substring(0, 2));
+                    int timeDiff = Math.abs(currentHour - forecastHour);
+                    
+                    log.error("=== 강제 로그: 시간 비교 - 현재시간: {}시, 예보시간: {}시, 시간차: {}시간 ===", 
+                            currentHour, forecastHour, timeDiff);
+                    
+                    // 현재 시간에 가장 가까운 예보 선택
+                    if (closestForecast[0] == null) {
+                        closestForecast[0] = entry.getValue();
+                        log.error("=== 강제 로그: 첫 번째 예보 선택: {}시 (기온: {}도) ===", 
+                                forecastHour, entry.getValue().get("TMP"));
+                    } else {
+                        // 더 가까운 예보가 있는지 확인
+                        int currentClosestHour = Integer.parseInt(
+                            forecastByTime.entrySet().stream()
+                                .filter(e -> e.getValue() == closestForecast[0])
+                                .findFirst()
+                                .get()
+                                .getKey()
+                                .substring(8, 10)
+                        );
+                        
+                        if (timeDiff < Math.abs(currentHour - currentClosestHour)) {
+                            closestForecast[0] = entry.getValue();
+                            log.error("=== 강제 로그: 더 가까운 예보 선택: {}시 (기온: {}도, {}시간 차이) ===", 
+                                    forecastHour, entry.getValue().get("TMP"), timeDiff);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("=== 강제 로그: 예보 시간 처리 실패: {} ===", timeKey, e);
+            }
+        }
+        
+        // 디버깅을 위해 모든 예보 시간대 출력
+        log.info("=== 모든 예보 시간대 ===");
+        for (Map.Entry<String, Map<String, Object>> entry : forecastByTime.entrySet()) {
+            String timeKey = entry.getKey();
+            String fcstDate = timeKey.substring(0, 8);
+            String fcstTime = timeKey.substring(8, 12);
+            log.info("예보 시간: {} {} (기온: {}도)", fcstDate, fcstTime, entry.getValue().get("TMP"));
+        }
+        
+        // 가장 가까운 예보가 없으면 첫 번째 예보 사용
+        if (closestForecast[0] == null && !forecastByTime.isEmpty()) {
+            closestForecast[0] = forecastByTime.values().iterator().next();
+            log.warn("예보를 찾지 못해 첫 번째 예보를 사용합니다");
+        }
+        
+        if (closestForecast[0] == null) {
+            throw new IllegalStateException("유효한 예보 데이터가 없습니다");
+        }
+        
+        // 선택된 예보에서 데이터 추출
+        Integer tmp = null, pop = null, sky = null, wsd = null;
+        
+        if (closestForecast[0].containsKey("TMP")) {
+            tmp = Integer.parseInt(String.valueOf(closestForecast[0].get("TMP")));
+            log.info("선택된 기온: {}도", tmp);
+        }
+        if (closestForecast[0].containsKey("POP")) {
+            pop = Integer.parseInt(String.valueOf(closestForecast[0].get("POP")));
+        }
+        if (closestForecast[0].containsKey("SKY")) {
+            sky = Integer.parseInt(String.valueOf(closestForecast[0].get("SKY")));
+        }
+        if (closestForecast[0].containsKey("WSD")) {
+            wsd = (int) Float.parseFloat(String.valueOf(closestForecast[0].get("WSD")));
         }
 
         // 필수 데이터 검증
@@ -238,14 +327,6 @@ public class ForecastFetcher {
             return new WeatherInfo(tmp, pop, sky, wsd);
     }
     
-    /**
-     * 테스트용 더미 날씨 데이터
-     * API 호출 실패 시 반환되는 기본 데이터
-     */
-    private WeatherInfo getDummyWeatherInfo() {
-        // API 실패 시 기본 더미 데이터 반환
-        return new WeatherInfo(20, 30, 1, 5); // 기온 20도, 강수확률 30%, 맑음, 풍속 5m/s
-    }
 
     /**
      * 현재 시간에 가장 가까운 기상청 예보 기준 시각 반환
