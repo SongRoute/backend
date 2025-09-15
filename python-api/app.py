@@ -7,6 +7,7 @@ import numpy as np
 import io
 import torch
 import logging
+import os
 
 # 로깅 설정 (INFO 레벨, 시간/레벨/메시지 출력)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,7 +17,9 @@ app = Flask(__name__)
 
 # YOLOv8 model loading
 try:
-    model = YOLO('weights/best_m.pt')  # 모델 가중치 파일 경로 (확인 필요)
+    # model = YOLO('weights/best_m.pt')  # 모델 가중치 파일 경로 (확인 필요)
+    weight_path = os.path.join(os.path.dirname(__file__), "weights", "best_m.pt")  # 절대 경로 사용
+    model = YOLO(weight_path)
     logging.info("YOLOv8 model loaded successfully.")
 except Exception as e:
     logging.error(f"Error loading YOLOv8 model: {e}")
@@ -29,8 +32,8 @@ def analyze_crowd():
     if model is None:
         return jsonify({"error": "Model not loaded"}), 500
 
-    # 요청에 이미지 데이터가 없는 경우
-    if 'image' not in request.json:
+    # 요청 JSON이 없거나 image 키가 없는 경우
+    if not request.is_json or 'image' not in request.json: # 검증 강화
         return jsonify({"error": "No image data provided"}), 400
 
     try:
@@ -53,7 +56,7 @@ def analyze_crowd():
         for result in results:
             if result.boxes is not None:
                 # result.boxes.cls는 탐지된 객체의 클래스 ID 텐서
-                person_count += torch.sum(result.boxes.cls == 0).item()
+                person_count += torch.sum(result.boxes.cls.to(torch.int) == 0).item()
             
         logging.info(f"Image analyzed, detected {person_count} people.")
 
