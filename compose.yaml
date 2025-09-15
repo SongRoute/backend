@@ -31,6 +31,9 @@ services:
     container_name: backend-python-api
     ports:
       - '5000:5000'
+    environment:
+#      - YOLO_CONFIG_DIR=/app/ultralytics_config
+      - YOLO_CONFIG_DIR=/root/.config/Ultralytics
     volumes:
       - ./python-api:/app
     restart: unless-stopped

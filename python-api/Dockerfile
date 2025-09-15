@@ -14,8 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip --default-timeout=1200 install --no-cache-dir -r requirements.txt
 
+# YOLO 설정 디렉토리 생성 및 권한 부여
+RUN mkdir -p /root/.config/Ultralytics && chmod -R 777 /root/.config/Ultralytics
+
 # Gunicorn 설치 (WSGI 서버)
 RUN pip install --no-cache-dir gunicorn
+
+# YOLO 설정 경로 환경 변수
+ENV YOLO_CONFIG_DIR=/root/.config/Ultralytics
 
 # Flask API 서버 코드 복사
 COPY app.py .
