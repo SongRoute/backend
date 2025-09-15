@@ -8,7 +8,7 @@ services:
       - 'MYSQL_USER=appuser'
       - 'MYSQL_PASSWORD=sdsqkqh'
     ports:
-      - '3306:3306'
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     # DB가 준비될 때까지 기다리게 하는 Health Check 기능
