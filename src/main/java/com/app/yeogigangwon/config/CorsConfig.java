@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
-@Configuration
+//@Configuration  // 일시적으로 비활성화
 public class CorsConfig implements WebMvcConfigurer {
 
     @Override
@@ -30,11 +30,20 @@ public class CorsConfig implements WebMvcConfigurer {
         config.setAllowCredentials(false);  // credentials false로 변경
         config.setAllowedOriginPatterns(Arrays.asList("*"));  // 모든 오리진 허용
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+    }
+    
+    // 추가 CORS 설정: Spring Boot의 기본 CORS 처리기 비활성화
+    @Bean
+    public org.springframework.boot.web.servlet.FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
+        org.springframework.boot.web.servlet.FilterRegistrationBean<CorsFilter> registration = 
+            new org.springframework.boot.web.servlet.FilterRegistrationBean<>(corsFilter());
+        registration.setOrder(-100); // 가장 높은 우선순위
+        return registration;
     }
 }
