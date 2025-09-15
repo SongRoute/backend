@@ -27,31 +27,30 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     // MySQL 의존성
     implementation 'mysql:mysql-connector-java:8.0.33'
-    
-    // Lombok
-    compileOnly 'org.apache.groovy:groovy'
+
+    //Groovy & Lombok
+    implementation 'org.apache.groovy:groovy'
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    
+
     // Jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-    
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+
+
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-
-    implementation 'org.apache.groovy:groovy'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'io.projectreactor:reactor-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
-    implementation 'org.apache.commons:commons-csv:1.10.0'
+
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+//    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
 }
 
