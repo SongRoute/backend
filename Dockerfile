@@ -11,6 +11,9 @@ WORKDIR /app
 COPY gradlew .
 COPY gradle ./gradle
 
+# gradlew에 실행 권한을 부여합니다.
+RUN chmod +x gradlew
+
 # 소스 코드와 설정 파일을 복사합니다.
 COPY build.gradle settings.gradle ./
 COPY src ./src
